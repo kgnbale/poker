@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>房间2--Poker--NBFarmework</title>
+    <style>
+        html,
+        body {
+            overflow-x: hidden; /* Prevent scroll on narrow devices */
+        }
+
+        body {
+            padding-top: 16px;
+        }
+
+        @media (max-width: 767.98px) {
+            .offcanvas-collapse {
+                position: fixed;
+                top: 56px; /* Height of navbar */
+                bottom: 0;
+                width: 100%;
+                padding-right: 1rem;
+                padding-left: 1rem;
+                overflow-y: auto;
+                background-color: var(--gray-dark);
+                transition: -webkit-transform .3s ease-in-out;
+                transition: transform .3s ease-in-out;
+                transition: transform .3s ease-in-out, -webkit-transform .3s ease-in-out;
+                -webkit-transform: translateX(100%);
+                transform: translateX(100%);
+            }
+            .offcanvas-collapse.open {
+                -webkit-transform: translateX(-1rem);
+                transform: translateX(-1rem); /* Account for horizontal padding on navbar */
+            }
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            color: rgba(255, 255, 255, .75);
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-underline .nav-link {
+            padding-top: .75rem;
+            padding-bottom: .75rem;
+            font-size: .875rem;
+            color: var(--secondary);
+        }
+
+        .nav-underline .nav-link:hover {
+            color: var(--blue);
+        }
+
+        .nav-underline .active {
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+
+        .text-white-50 { color: rgba(255, 255, 255, .5); }
+
+        .bg-purple { background-color: var(--purple); }
+
+        .border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+        .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+        .lh-100 { line-height: 1; }
+        .lh-125 { line-height: 1.25; }
+        .lh-150 { line-height: 1.5; }
+
+    </style>
+</head>
+<body>
+<style>
+    .form-control:focus {
+        outline: none;
+        box-shadow: none;
+        border-color: #ced4da;
+    }
+    .card-footer {
+        padding:0;
+        background-color:unset;
+    }
+    .form-control {
+        display: inline-block;
+    }
+    .card-footer {
+        border: 0;
+    }
+    .card-footer .btn {
+        width: 100%;
+    }
+    .list-group-item {
+        border:none;
+        padding: .25rem .15rem;
+        position: relative;
+        display: block;
+        margin-bottom: -1px;
+        background-color: #fff;
+    }
+    .poker img {
+        display: inline-block;
+        width: 4.5rem;
+        height: 6.2rem;
+        margin: .25rem .05rem;
+        background-color: #f5f5f5;
+        vertical-align: unset;
+        border: 2px solid;
+        cursor: pointer;
+    }
+    .active {
+        border-color: blue!important;
+    }
+    #info {
+        max-height: 80px;
+        overflow-y: scroll;
+        width: 100%;
+    }
+    .console span {
+        cursor: pointer;
+    }
+    #send {
+        cursor: pointer;
+    }
+</style>
+<main role="main" class="container" style="max-width: 798px">
+    <div class="card">
+        <div class="card-header" id="tips">Featured</div>
+        <!--
+        <div style="min-height: 100px" class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded box-shadow">
+            <div id="info"></div>
+        </div>
+        -->
+        <div class="card-body">
+            <ul class="list-group list-group-flush" id="info">
+                <li class="list-group-item">hello:快点啊，我等的花都谢了</li>
+                <li class="list-group-item">Dapibus ac facilisis in</li>
+                <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
+            <!--
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+            -->
+        </div>
+
+        <div class="card-footer text-muted">
+            <div class="input-group">
+                <input id="text" type="text" class="form-control" placeholder="请输入发送内容！">
+                <div class="input-group-append">
+                    <span class="input-group-text" id="send"> 发 送 </span>
+                </div>
+            </div>
+            <!--
+            <div class="form-row">
+                <div class="col-11">
+                    <input type="text" class="form-control" placeholder="发送消息" required>
+                </div>
+                <div class="col-1">
+                    <button class="btn btn-secondary" type="submit">发送</button>
+                </div>
+            </div>-->
+        </div>
+
+    </div>
+
+
+    <div class="my-3 p-3 bg-white rounded box-shadow" style="min-height: 250px">
+        <h6 class="console border-bottom border-gray pb-2 mb-0">
+            <span id="room" class="badge">房间</span>
+            <span id="exit" class="badge badge-secondary">离开</span>
+            <span id="ready" class="badge badge-secondary">准备</span>
+            <div id="lead" class="float-right" style="display: none">
+                <span class="no badge badge-secondary">过</span>
+                <span class="yes badge badge-secondary">出牌</span>
+            </div>
+            <div id="rob" class="float-right" style="display: none">
+                <span class="no badge badge-secondary">不叫</span>
+                <span class="yes badge badge-secondary">叫地主</span>
+            </div>
+        </h6>
+        <div class="poker" id="poker"></div>
+    </div>
+
+    <div class="my-3 p-3 bg-white rounded box-shadow">
+        <h6 class="border-bottom border-gray pb-2 mb-0">房间成员</h6>
+        <div class="media text-muted pt-3" id="a">
+            <!--
+            <img style="width: 32px;height: 32px" src="/public/logo/farmer.png" alt="" class="mr-2 rounded">
+            -->
+            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <strong class="text-gray-dark">等待玩家</strong>
+                    <a id="prepare-a"></a>
+                </div>
+                <span id="coin-a" class="d-block">0</span>
+            </div>
+        </div>
+        <div class="media text-muted pt-3" id="b">
+            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <strong class="text-gray-dark">等待玩家</strong>
+                    <a id="prepare-b"></a>
+                </div>
+                <span id="coin-b" class="d-block">0</span>
+            </div>
+        </div>
+        <div class="media text-muted pt-3" id="c">
+            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <strong class="text-gray-dark">等待玩家</strong>
+                    <a id="prepare-c"></a>
+                </div>
+                <span id="coin-c" class="d-block">0</span>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Modal -->
+<div class="modal fade" id="end-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="common.js"></script>
+<script>
+    var token = get('token')
+    var user = {};
+    var websocket = new WebSocket(server);
+    var lead = [],leadlock=false;
+
+    function drawPlayer(seat,name) {
+        return '<small>农民('+name+'):</small>&nbsp;';
+    }
+
+    function drawPoker(p) {
+        return '<span class="badge badge-primary">'+p+'</span>&nbsp;';
+    }
+    
+    function drawChat(name,msg) {
+        $("#info").append('<li class="list-group-item">'+name+' : '+msg+'</li>');
+    }
+    
+    function tips(msg) {
+        $("#tips").html(msg);
+    }
+    
+    function reply_user(data) {
+        user = data;
+        if(data.play == "hall") {
+            websocket.send(JSON.stringify({
+                action:'room/enter',
+                token:token,
+                id:0
+            }));
+        }
+        else {
+            websocket.send(JSON.stringify({
+                action:'room/synchro',
+                token:token,
+            }));
+        }
+    }
+
+    function reply_room_synchro(data) {
+        if(data.status == 'startd') {
+            $("#ready").hide();
+            if(data.landowner) {
+                //如果该我出牌，显示出牌按钮
+                if(data.leader == user.seat) {
+                    $("#lead").show();
+                }
+            }
+            else {
+                if(data.call == user.seat) {
+                    $("#rob").show();
+                }
+            }
+        }
+
+        $.each({a:data.a,b:data.b,c:data.c},function (i,p) {
+            $("#" + i + " strong").html(p.name);
+            $("#coin-" + i).html(p.coin);
+
+            if(p.ready) {
+                $("#prepare-" + i).html('ready');
+                if(i == user.seat) $("#ready").html('取消准备');
+            }
+            else {
+                if(i == user.seat) $("#ready").html('准备');
+            }
+        })
+
+        $("#room").html(data.name);
+
+        if(data.status == 'startd') {
+            var player = data[user.seat];
+            var div = $("#poker");
+            $.each(player.poker,function(k,poker){
+                div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/a'+poker.id+'.png">');
+            });
+
+            if(data.landowner) {
+
+            }
+            else {
+                //叫地主
+                if(data.call == user.seat) {
+                    $("#rob").show();
+                }
+                else {
+                    tips('等待座位'+data.call+'的玩家抢地主');
+                }
+            }
+        }
+    }
+
+    function reply_room_enter(data) {
+        if(data.code) {
+            console.log(data.msg);
+            return;
+        }
+        $("#room").html(data.name);
+        user.room = data.id;
+        user.seat = data.seat
+        $.each({a:data.a,b:data.b,c:data.c},function (i,p) {
+            $("#" + i + " strong").html(p.name);
+            $("#coin-" + i).html(p.coin);
+        })
+    }
+
+    function push_room_enter(data) {
+        $("#" + data.seat + " strong").html(data.name);
+    }
+
+    function reply_room_quit(data) {
+        $("#room").html('房间');
+        $("#" + user.seat + " strong").html('等待玩家');
+        user.room = 0;
+        user.seat = 0;
+    }
+
+    function push_room_quit(data) {
+        $("#" + data.seat + " strong").html('等待玩家');
+    }
+    
+    function reply_play_lead(data) {
+        leadlock = false;
+        if(data.code){
+            alert(data.msg);
+            lead = [];
+            return;
+        }
+        var info = drawPlayer(1,'赌王')+'<h6>';
+        for(var x in lead) {
+            info+=drawPoker(lead[x].val);
+            $("#"+lead[x].id).remove();
+        }
+        lead = [];
+        info+='</h6>';
+        $("#info").append(info);
+        $("#info").scrollTop($("#info")[0].scrollHeight);
+        $("#lead").hide();
+    }
+
+    function push_play_lead(data) {
+        if(data.nexter == user.seat) {
+            $("#lead").show();
+        }
+        var info = drawPlayer(1,'赌王')+'<h6>';
+        $.each(data.poker,function (i,p) {
+            info+=drawPoker(p);
+        })
+        info+='</h6>';
+        $("#info").append(info);
+        $("#info").scrollTop($("#info")[0].scrollHeight);
+    }
+
+    function reply_play_ready(data) {
+        if(data.code) {
+            alert(data.msg)
+            return;
+        }
+        if(data.ready) {
+            $("#ready").html('取消准备');
+            $("#prepare-" + user.seat).html('ready');
+            tips('等待其它玩家开始游戏');
+        }
+        else  {
+            $("#ready").html('准备');
+            $("#prepare-" + user.seat).html('');
+        }
+    }
+
+    function push_play_ready(data) {
+        if(data.ready) {
+            $("#prepare-" + data.seat).html('ready');
+        }
+        else {
+            $("#prepare-" + data.seat).html('');
+        }
+    }
+
+    function push_play_rob(data) {
+        if(data.landowner) {
+            if(data.landowner == user.seat) {
+                //如果我是地主
+                tips('你抢到地主了，请出牌！');
+                $("#lead").show();
+                var div = $("#poker");
+                div.empty();
+                $.each(data.poker,function(k,poker){
+                    div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/a'+poker.id+'.png">');
+                });
+            }
+            else {
+                tips('座位'+data.landowner+'的玩家成为地主，等待其出牌！');
+            }
+        }
+        else {
+            if(data.call == user.seat) {
+                $("#rob").show();
+                tips('该你抢地主了');
+            }
+            else {
+                tips('等待座位'+data.call+'的玩家抢地主');
+            }
+        }
+    }
+
+    function reply_play_rob(data) {
+        if(data.code) {
+            alert(data.msg);
+            return;
+        }
+        $("#rob").hide();
+
+        if(data.call) {
+            tips('等待座位'+data.call+'的玩家抢地主');
+        }
+    }
+
+    function push_play_start(data) {
+        var div = $("#poker");
+        $.each(data.poker,function(k,poker){
+            div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="/public/card/a'+poker.id+'.png">');
+        });
+        $("#prepare-a").html('');
+        $("#prepare-b").html('');
+        $("#prepare-c").html('');
+        $("#ready").hide();
+        //叫地主
+        if(data.call == user.seat) {
+            $("#rob").show();
+            tips('该你叫地主了！');
+        }
+        else {
+            tips('等待座位'+data.call+'的玩家叫地主！');
+        }
+    }
+
+    function push_chat_room(data) {
+        drawChat(data.seat,data.text)
+        $("#info").scrollTop($("#info")[0].scrollHeight);
+    }
+
+    function reply_chat_room(data) {
+        if(data.code) {
+            alert(data.msg);
+            return;
+        }
+        drawChat(user.name,$('#text').val())
+        $('#text').val('');
+        $("#info").scrollTop($("#info")[0].scrollHeight);
+    }
+
+    websocket.onopen = function (evt) {
+        console.log("Connected to WebSocket server.");
+        websocket.send(JSON.stringify({
+            action:'user',
+            token:token,
+        }));
+    };
+
+    websocket.onclose = function (evt) {
+        console.log("Disconnected");
+    };
+
+    websocket.onmessage = function (evt) {
+        var data = JSON.parse(evt.data);
+        console.log(data);
+        switch (data.action) {
+            case 'reply-chat-room':
+                reply_chat_room(data);
+                break;
+            case 'push-chat-room':
+                push_chat_room(data);
+                break;
+            case 'reply-play-lead':
+                reply_play_lead(data);
+                break;
+            case 'push-play-lead':
+                push_play_lead(data);
+                break;
+            case 'reply-room-enter':
+                reply_room_enter(data);
+                break;
+            case 'push-room-enter':
+                push_room_enter(data)
+                break;
+            case 'push-room-quit':
+                push_room_quit(data)
+                break;
+            case 'reply-room-quit':
+                reply_room_quit(data);
+                break;
+            case 'push-play-ready':
+                push_play_ready(data);
+                break;
+            case 'reply-play-ready':
+                reply_play_ready(data);
+                break;
+            case 'push-play-rob':
+                push_play_rob(data);
+                break;
+            case 'reply-play-rob':
+                reply_play_rob(data);
+                break;
+            case 'push-play-start':
+                push_play_start(data);
+                break;
+            case 'reply-room-synchro':
+                reply_room_synchro(data)
+                break;
+            case 'reply-user':
+                reply_user(data);
+                break;
+        }
+    };
+    websocket.onerror = function (evt, e) {
+        console.log('Error occured: ' + evt.data);
+    };
+
+    //取消/准备
+    $("#ready").click(function(){
+        websocket.send(JSON.stringify({
+            action:'play/ready',
+            token:token,
+        }));
+    });
+
+    //抢地主
+    $("#rob .yes").click(function(){
+        websocket.send(JSON.stringify({
+            action:'play/rob',
+            token:'{$token}',
+            rob:1
+        }));
+    });
+
+    //不抢
+    $("#rob .no").click(function(){
+        websocket.send(JSON.stringify({
+            action:'play/rob',
+            token:token,
+            rob:0
+        }));
+    });
+
+    $("#poker").on("click",'img',function(){
+        var img = $(this);
+        $alt = img.attr('alt');
+        if(img.hasClass("active")) {
+            $(this).removeClass("active");
+        }
+        else {
+            $(this).addClass("active");
+        }
+    });
+
+    //过
+    $("#lead .no").click(function(){
+        websocket.send(JSON.stringify({
+            action:'play/lead',
+            token:token,
+            poker:''
+        }));
+    });
+
+    //出牌
+    $("#lead .yes").click(function(){
+        if(leadlock) {
+            return;
+        }
+        var ids = '',d = '';
+        $('.active').each(function(){
+            var id = $(this).attr("id");
+            var val = $(this).attr("val");
+            lead.push({
+                id:id,
+                val:val
+            });
+            ids += d+id;
+            d = ',';
+        });
+        if(!ids) {
+            return;
+        }
+        console.log(lead);
+        websocket.send(JSON.stringify({
+            action:'play/lead',
+            token:token,
+            poker:ids
+        }));
+    });
+
+    //退出房间
+    $("#exit").click(function(){
+        websocket.send(JSON.stringify({
+            token:token,
+            action:'room/quit',
+        }));
+    });
+
+    //发送
+    $("#send").click(function(){
+        var msg = $('#text').val();
+        if(!msg) {
+            return;
+        }
+        websocket.send(JSON.stringify({
+            action:'chat/room',
+            token:token,
+            text:msg
+        }));
+    });
+    //$('#end-info').modal()
+</script>
+</body>
+</html>

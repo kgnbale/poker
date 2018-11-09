@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>房间列表--Poker--NBFarmework</title>
+    <style>
+        html,
+        body {
+            overflow-x: hidden; /* Prevent scroll on narrow devices */
+        }
+
+        body {
+            padding-top: 56px;
+        }
+
+        @media (max-width: 767.98px) {
+            .offcanvas-collapse {
+                position: fixed;
+                top: 56px; /* Height of navbar */
+                bottom: 0;
+                width: 100%;
+                padding-right: 1rem;
+                padding-left: 1rem;
+                overflow-y: auto;
+                background-color: var(--gray-dark);
+                transition: -webkit-transform .3s ease-in-out;
+                transition: transform .3s ease-in-out;
+                transition: transform .3s ease-in-out, -webkit-transform .3s ease-in-out;
+                -webkit-transform: translateX(100%);
+                transform: translateX(100%);
+            }
+            .offcanvas-collapse.open {
+                -webkit-transform: translateX(-1rem);
+                transform: translateX(-1rem); /* Account for horizontal padding on navbar */
+            }
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            color: rgba(255, 255, 255, .75);
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-underline .nav-link {
+            padding-top: .75rem;
+            padding-bottom: .75rem;
+            font-size: .875rem;
+            color: var(--secondary);
+        }
+
+        .nav-underline .nav-link:hover {
+            color: var(--blue);
+        }
+
+        .nav-underline .active {
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+
+        .text-white-50 { color: rgba(255, 255, 255, .5); }
+
+        .bg-purple { background-color: var(--purple); }
+
+        .border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+        .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+        .lh-100 { line-height: 1; }
+        .lh-125 { line-height: 1.25; }
+        .lh-150 { line-height: 1.5; }
+    </style>
+</head>
+<body>
+<main role="main" class="container" style="max-width: 600px">
+    <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded box-shadow">
+        <img class="mr-3" src="https://getbootstrap.com/assets/brand/bootstrap-outline.svg" alt="" width="48" height="48">
+        <div class="lh-100">
+            <h6 class="mb-0 text-white lh-100">斗斗</h6>
+            <small>Since 2011</small>
+        </div>
+    </div>
+
+    <div class="my-3 p-3 bg-white rounded box-shadow" id="rooms">
+        <h6 class="border-bottom border-gray pb-2 mb-0">游戏房间
+            <!--
+            <small class="d-block text-right mt-3">
+                <a href="#">快速加入</a>
+            </small>
+            -->
+        </h6>
+    </div>
+
+</main>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="common.js"></script>
+<script>
+    var token = get('token')
+    function draw_room(room) {
+        var join='';
+        if(room.number < 3) {
+            join = '<a href="/play?id='+room.id+'&token='+token+'" >加入</a>';
+        }
+        var player = '';
+        if(room.number > 0) {
+            var comma = '';
+            $.each([room.a,room.b,room.c],function (i,name) {
+                if(name) {
+                    player = player + comma+'<span>'+name+'</span>';
+                    comma = ',';
+                }
+            })
+        }
+        else {
+            player = '<span>等待玩家加入</span>';
+        }
+
+        return '<div class="media text-muted pt-3">\n' +
+        '            <img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">\n' +
+        '            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">\n' +
+        '                <div class="d-flex justify-content-between align-items-center w-100">\n' +
+        '                    <strong class="text-gray-dark">'+room.number+'/3</strong>\n' + join +
+        '                </div>\n' + player +
+        '            </div>\n' +
+        '        </div>'
+    }
+    
+    function reply_room(data) {
+        if(data.code) {
+            alert(data.msg);
+            return;
+        }
+        $.each(data.rooms,function (i,room) {
+            $("#rooms").append(draw_room(room));
+        });
+    }
+
+    function reply_user(data) {
+        if(data.play == "room") {
+            window.location.href='play.html?token='+token+'&id='+data.room
+        }
+        else {
+            websocket.send(JSON.stringify({
+                action:'room',
+                token:token,
+            }));
+        }
+    }
+
+    var websocket = new WebSocket(server);
+    websocket.onopen = function (evt) {
+        console.log("Connected to WebSocket server.");
+        websocket.send(JSON.stringify({
+            action:'user',
+            token:token,
+        }));
+    };
+    websocket.onclose = function (evt) {
+        console.log("Disconnected");
+    };
+    websocket.onmessage = function (evt) {
+        var data = JSON.parse(evt.data);
+        console.log(data);
+        switch (data.action) {
+            case 'reply-room':
+                reply_room(data);
+                break;
+            case 'reply-user':
+                reply_user(data);
+                break;
+        }
+    };
+    websocket.onerror = function (evt, e) {
+        console.log('Error occured: ' + evt.data);
+    };
+
+</script>
+</body>
+</html>
