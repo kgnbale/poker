@@ -133,7 +133,7 @@ class Play extends Controller {
         $this->end($seat, $room);
     }
 
-    private function end($seat,$room) {
+    private function end($room) {
         $win = $room->win;
         if(!$win) {
             return false;
@@ -153,6 +153,7 @@ class Play extends Controller {
         $push = [];
 
         if($win === $room->landowner) {
+            $push['landowner']=1;
             $winscore = 0;
             foreach ($farmer as $v) {
                 $loser = $room->$v;
@@ -160,31 +161,27 @@ class Play extends Controller {
                 $push[$v]= -$tmp;
                 $winscore +=  $tmp;
             }
+            $push[$landowner] = $winscore;
         }
         else{
+            $push['landowner']=0;
             $winscore = 0;
             foreach ($farmer as $v) {
                 $loser = $room->$v;
                 $tmp = $loser['multiple'] * $winer['multiple'] * $score;
-                $push[$v]= -$tmp;
-                $winscore +=  $tmp;
+                $push[$v]= $tmp;
+                $winscore -=  $tmp;
             }
+            $push[$landowner] = $winscore;
         }
-
 
         //平民和地主
-
-
-
         foreach (['a','b','c'] as $v) {
-
-            if($win === $v) {
-
-            }
-
-
+            $player = $room->$v;
+            $player = \model\User::name($player['name']);
+            $player->coin = $push[$v];
+            $this->push($player['fd'],'play-end',$push);
         }
-
     }
 
     //出牌

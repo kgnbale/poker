@@ -365,7 +365,7 @@ TODO
 ``` javascript
 {
     "action":"push-play-end",
-    "win":"a", //赢家
+    "landowner":0, //1地主胜利，0平民胜利
     "a":20,  //该局a位玩家所得积分
     "b":-10, //该局b位玩家所得积分
     "c":-10  //该局c位玩家所得积分

@@ -82,4 +82,13 @@ class User extends Model {
         $this->roomid = $roomid;
     }
 
+    protected function ___coin($coin) {
+        $coin = $this->coin + $coin;
+        $row = self::updateId($this->id,'coin=?',$coin);
+        $row and Redis::hmset('user:'.$this->name,[
+            'coin'=>$coin
+        ]);
+        return $coin;
+    }
+
 }
