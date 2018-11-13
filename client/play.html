@@ -481,7 +481,7 @@
     function push_play_start(data) {
         var div = $("#poker");
         $.each(data.poker,function(k,poker){
-            div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="/public/card/a'+poker.id+'.png">');
+            div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/a'+poker.id+'.png">');
         });
         $("#prepare-a").html('');
         $("#prepare-b").html('');

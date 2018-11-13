@@ -81,15 +81,6 @@ class Room extends Model {
             $room = self::create($id);
         }
         return new self($room);
-        /*
-        return Pool::value(get_called_class().':'.$id,function () use ($id) {
-            $room = Redis::hGetAll('room:'.$id);
-            if(!$room) {
-                $room = self::create($id);
-            }
-            return new self($room);
-        });
-        */
     }
 
     protected function _name() {
@@ -130,56 +121,44 @@ class Room extends Model {
     }
 
     protected function _a() {
-        $a = $this->raw('a');
-        if($a) {
-            return json_decode($a,true);
-        }
-        return [];
+        return $this->getSeat('a');
     }
 
     protected function _b() {
-        $b = $this->raw('b');
-        if($b) {
-            return json_decode($b,true);
-        }
-        return [];
+        return $this->getSeat('b');
     }
 
     protected function _c() {
-        $c = $this->raw('c');
-        if($c) {
-            return json_decode($c,true);
+        return $this->getSeat('c');
+    }
+
+    protected function ___a($player) {
+        return $this->setSeat('a',$player);
+    }
+
+    protected function ___b($player) {
+        return $this->setSeat('b',$player);
+    }
+
+    protected function ___c($player) {
+        return $this->setSeat('c',$player);
+    }
+
+    private function getSeat($seat) {
+        $seat = $this->raw($seat);
+        if($seat) {
+            return json_decode($seat,true);
         }
         return [];
     }
 
-    protected function ___a($player) {
+    private function setSeat($seat,$player) {
         if($player) {
-            $player = array_merge($this->a,$player);
-            Redis::hMset('room:'.$this->id,['a'=>json_encode($player)]);
+            $player = array_merge($this->$seat,$player);
+            Redis::hMset('room:'.$this->id,[$seat=>json_encode($player)]);
             return $player;
         }
-        Redis::hMset('room:'.$this->id,['a'=>0]);
-        return 0;
-    }
-
-    protected function ___b($player) {
-        if($player) {
-            $player = array_merge($this->b,$player);
-            Redis::hMset('room:'.$this->id,['b'=>json_encode($player)]);
-            return $player;
-        }
-        Redis::hMset('room:'.$this->id,['b'=>0]);
-        return 0;
-    }
-
-    protected function ___c($player) {
-        if($player) {
-            $player = array_merge($this->c,$player);
-            Redis::hMset('room:'.$this->id,['c'=>json_encode($player)]);
-            return $player;
-        }
-        Redis::hMset('room:'.$this->id,['c'=>0]);
+        Redis::hMset('room:'.$this->id,[$seat=>0]);
         return 0;
     }
 

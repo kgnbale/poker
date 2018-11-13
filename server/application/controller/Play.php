@@ -184,36 +184,4 @@ class Play extends Controller {
         }
     }
 
-    //出牌
-    public function lead2($poker) {
-        $poker = explode(',',$poker);
-        $poker = new Poker($poker);
-        $map = [
-            'individual'=>'个',
-            'straight'=>'顺子',
-            'straights'=>'顺对',
-            'bomb'=>'炸弹',
-            'nbomb'=>'核弹',
-            'couplet'=>'对子',
-            'plane'=>'飞机',
-            'train'=>'坦克'
-        ];
-
-        if(isset($map[$poker->is])) {
-            $this->success($map[$poker->is],'play-lead');
-        }
-        else {
-            $this->error('play-lead',4033,'出牌失败！');
-        }
-    }
-
-
-    public function test2() {
-        Response::header("Content-Type", "text/html; charset=utf-8");
-        $poker = '6,7,8,10,11,13,14,15,16,34,35,37';
-        $poker = explode(',',$poker);
-        $poker = new Poker($poker);
-        echo $poker->is?:'出牌失败';
-    }
-
 }

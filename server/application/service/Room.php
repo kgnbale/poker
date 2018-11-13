@@ -35,7 +35,7 @@ class Room extends Service {
         $id = $id?:$this->random();
         if($id === 0) {
             $this->code = 409;
-            $this->msg = '房间满了';
+            $this->msg = '没有空闲房间了';
             return false;
         }
 
@@ -100,10 +100,10 @@ class Room extends Service {
         $stack = [];
         $room = \model\Room::init();
         foreach ($room as $v) {
-            if($v->playerNum == 2) {
+            if($v->number == 2) {
                 return $v->id;
             }
-            $stack[$v->playerNum] = $v->id;
+            $stack[$v->number] = $v->id;
         }
 
         //如果有一人的房间
