@@ -23,7 +23,7 @@ use util\Base;
  */
 class Login extends Base {
 
-    protected $_rule = [
+    public $_rule = [
         'name'  =>  'require|max:25',
         'pass'  =>  'require|max:25',
     ];
