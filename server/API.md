@@ -257,7 +257,7 @@ TODO
 ### 请求参数
 |参数|必填|类型|说明|
 |:-----  |:-------|:-----|-----  |
-|action  |ture    |sting   |请求动作,值固定为`user`|
+|action  |ture    |sting   |请求动作,值固定为`play/ready`|
 |token   |ture    |sting   |登录成功后获取的token值|
 
 ### 返回结果
