@@ -263,6 +263,7 @@
 <script src="common.js"></script>
 <script>
     var token = get('token')
+    var id = get('id');
     var user = {};
     var websocket = new WebSocket(server);
     var lead = [],leadlock=false;
@@ -289,7 +290,7 @@
             websocket.send(JSON.stringify({
                 action:'room/enter',
                 token:token,
-                id:0
+                id:id?id:0
             }));
         }
         else {
