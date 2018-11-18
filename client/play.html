@@ -261,12 +261,19 @@
 <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="common.js"></script>
+<script src="websocket.js"></script>
 <script>
     var token = get('token')
     var id = get('id');
     var user = {};
-    var websocket = new WebSocket(server);
     var lead = [],leadlock=false;
+    var client = new Client(function (evt) {
+        console.log("Connected to WebSocket server.");
+        client.send({
+            action:'user',
+            token:token,
+        });
+    });
 
     function drawPlayer(seat,name) {
         return '<small>农民('+name+'):</small>&nbsp;';
@@ -283,25 +290,25 @@
     function tips(msg) {
         $("#tips").html(msg);
     }
-    
-    function reply_user(data) {
+
+    client.reply('user',function (data) {
         user = data;
         if(data.play == "hall") {
-            websocket.send(JSON.stringify({
+            client.send({
                 action:'room/enter',
                 token:token,
                 id:id?id:0
-            }));
+            });
         }
         else {
-            websocket.send(JSON.stringify({
+            client.send({
                 action:'room/synchro',
                 token:token,
-            }));
+            });
         }
-    }
+    })
 
-    function reply_room_synchro(data) {
+    client.reply('room-synchro',function (data) {
         if(data.status == 'startd') {
             $("#ready").hide();
             if(data.landowner) {
@@ -352,9 +359,9 @@
                 }
             }
         }
-    }
+    })
 
-    function reply_room_enter(data) {
+    client.reply('room-enter',function (data) {
         if(data.code) {
             console.log(data.msg);
             return;
@@ -366,24 +373,24 @@
             $("#" + i + " strong").html(p.name);
             $("#coin-" + i).html(p.coin);
         })
-    }
+    });
 
-    function push_room_enter(data) {
+    client.push('room-enter',function () {
         $("#" + data.seat + " strong").html(data.name);
-    }
+    })
 
-    function reply_room_quit(data) {
+    client.reply('room-quit',function (data) {
         $("#room").html('房间');
         $("#" + user.seat + " strong").html('等待玩家');
         user.room = 0;
         user.seat = 0;
-    }
+    })
 
-    function push_room_quit(data) {
+    client.push('room-quit',function (data) {
         $("#" + data.seat + " strong").html('等待玩家');
-    }
-    
-    function reply_play_lead(data) {
+    })
+
+    client.reply('room-quit',function (data) {
         leadlock = false;
         if(data.code){
             alert(data.msg);
@@ -400,9 +407,9 @@
         $("#info").append(info);
         $("#info").scrollTop($("#info")[0].scrollHeight);
         $("#lead").hide();
-    }
+    })
 
-    function push_play_lead(data) {
+    client.push('play-lead',function (data) {
         if(data.nexter == user.seat) {
             $("#lead").show();
         }
@@ -413,13 +420,9 @@
         info+='</h6>';
         $("#info").append(info);
         $("#info").scrollTop($("#info")[0].scrollHeight);
-    }
+    })
 
-    function reply_play_ready(data) {
-        if(data.code) {
-            alert(data.msg)
-            return;
-        }
+    client.reply('play-ready',function (data) {
         if(data.ready) {
             $("#ready").html('取消准备');
             $("#prepare-" + user.seat).html('ready');
@@ -429,18 +432,18 @@
             $("#ready").html('准备');
             $("#prepare-" + user.seat).html('');
         }
-    }
+    })
 
-    function push_play_ready(data) {
+    client.push('play-ready',function (data) {
         if(data.ready) {
             $("#prepare-" + data.seat).html('ready');
         }
         else {
             $("#prepare-" + data.seat).html('');
         }
-    }
+    })
 
-    function push_play_rob(data) {
+    client.push('play-ready',function (data) {
         if(data.landowner) {
             if(data.landowner == user.seat) {
                 //如果我是地主
@@ -465,9 +468,9 @@
                 tips('等待座位'+data.call+'的玩家抢地主');
             }
         }
-    }
+    })
 
-    function reply_play_rob(data) {
+    client.reply('play-rob',function (data) {
         if(data.code) {
             alert(data.msg);
             return;
@@ -477,9 +480,9 @@
         if(data.call) {
             tips('等待座位'+data.call+'的玩家抢地主');
         }
-    }
+    })
 
-    function push_play_start(data) {
+    client.push('play-start',function (data) {
         var div = $("#poker");
         $.each(data.poker,function(k,poker){
             div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/a'+poker.id+'.png">');
@@ -496,14 +499,14 @@
         else {
             tips('等待座位'+data.call+'的玩家叫地主！');
         }
-    }
+    })
 
-    function push_chat_room(data) {
+    client.push('chat-room',function (data) {
         drawChat(data.seat,data.text)
         $("#info").scrollTop($("#info")[0].scrollHeight);
-    }
+    })
 
-    function reply_chat_room(data) {
+    client.reply('chat-room',function (data) {
         if(data.code) {
             alert(data.msg);
             return;
@@ -511,74 +514,8 @@
         drawChat(user.name,$('#text').val())
         $('#text').val('');
         $("#info").scrollTop($("#info")[0].scrollHeight);
-    }
+    })
 
-    websocket.onopen = function (evt) {
-        console.log("Connected to WebSocket server.");
-        websocket.send(JSON.stringify({
-            action:'user',
-            token:token,
-        }));
-    };
-
-    websocket.onclose = function (evt) {
-        console.log("Disconnected");
-    };
-
-    websocket.onmessage = function (evt) {
-        var data = JSON.parse(evt.data);
-        console.log(data);
-        switch (data.action) {
-            case 'reply-chat-room':
-                reply_chat_room(data);
-                break;
-            case 'push-chat-room':
-                push_chat_room(data);
-                break;
-            case 'reply-play-lead':
-                reply_play_lead(data);
-                break;
-            case 'push-play-lead':
-                push_play_lead(data);
-                break;
-            case 'reply-room-enter':
-                reply_room_enter(data);
-                break;
-            case 'push-room-enter':
-                push_room_enter(data)
-                break;
-            case 'push-room-quit':
-                push_room_quit(data)
-                break;
-            case 'reply-room-quit':
-                reply_room_quit(data);
-                break;
-            case 'push-play-ready':
-                push_play_ready(data);
-                break;
-            case 'reply-play-ready':
-                reply_play_ready(data);
-                break;
-            case 'push-play-rob':
-                push_play_rob(data);
-                break;
-            case 'reply-play-rob':
-                reply_play_rob(data);
-                break;
-            case 'push-play-start':
-                push_play_start(data);
-                break;
-            case 'reply-room-synchro':
-                reply_room_synchro(data)
-                break;
-            case 'reply-user':
-                reply_user(data);
-                break;
-        }
-    };
-    websocket.onerror = function (evt, e) {
-        console.log('Error occured: ' + evt.data);
-    };
 
     //取消/准备
     $("#ready").click(function(){
