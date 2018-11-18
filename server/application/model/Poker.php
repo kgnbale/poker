@@ -11,6 +11,7 @@ namespace model;
 
 use deploy\Config;
 use nb\Collection;
+use util\Auth;
 
 /**
  * Poker
@@ -33,9 +34,15 @@ class Poker extends Collection {
         $this->num = count($pokerd);
     }
 
-    public function compare(Poker $poker) {
+    public function compare($last,Poker $poker) {
+        $auth = Auth::init();
+        //是否需要压牌
+        if($auth->name == $last) {
+            //不需要压牌，验证出牌规则
+            return $this->is;
+        }
 
-
+        //需要压牌，比较规则和大小
 
         return true;
     }
@@ -64,6 +71,7 @@ class Poker extends Collection {
                 //顺子,顺对
                 return $this->straights?'straights':($this->straight?'straight':($this->plane?'plane':false));
         }
+        return false;
     }
 
 
