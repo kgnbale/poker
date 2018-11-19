@@ -355,7 +355,7 @@
             });
 
             if(data.landowner) {
-
+                tips('等待 '+data.leader+' 出牌！');
             }
             else {
                 //叫地主
@@ -396,11 +396,6 @@
 
     client.listen('play-lead').reply(function (data) {
         leadlock = false;
-        if(data.code){
-            alert(data.msg);
-            lead = [];
-            return;
-        }
         var info = drawPlayer(1,'赌王')+'<h6>';
         for(var x in lead) {
             info+=drawPoker(lead[x].val);
@@ -564,6 +559,7 @@
         if(leadlock) {
             return;
         }
+        lead = [];
         var ids = '',d = '';
         $('.active').each(function(){
             var id = $(this).attr("id");
