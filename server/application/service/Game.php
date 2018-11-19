@@ -166,15 +166,17 @@ class Game extends Service {
         }
 
         //过
-        b('$input',$input);
-        b('count($input)',count($input));
-        b('lead-seat',$room->lead['seat']);
-        b('l$auth->seat',$auth->seat);
-        if(count($input) == 0 && $room->lead['seat'] != $auth->seat) {
+        if(count($input) == 0) {
+            if($room->lead['seat'] === $auth->seat) {
+                $this->code = 500;
+                $this->msg = '你必须出牌！';
+                return false;
+            }
             $room->leader = $seat==='a'?'b':($seat==='b'?'c':'a');
             $this->msg = '过';
             return true;
         }
+
 
 
         //校验要出的牌是否存在
