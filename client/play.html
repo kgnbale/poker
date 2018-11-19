@@ -324,6 +324,9 @@
                     tips('该你出牌了！');
                     $("#lead").show();
                 }
+                else {
+                    tips('等待 '+data.leader+' 出牌！');
+                }
             }
             else {
                 if(data.call == user.seat) {
@@ -355,7 +358,7 @@
             });
 
             if(data.landowner) {
-                tips('等待 '+data.leader+' 出牌！');
+
             }
             else {
                 //叫地主
