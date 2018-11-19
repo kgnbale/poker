@@ -27,5 +27,14 @@ class Index extends Controller {
         $this->display(__APP__.'index');
     }
 
+    public function test() {
+        $a = ['a','b','c'];
+
+        foreach ($a as $k=>$v) {
+            e($v);
+        }
+        e('end--'.$v);
+    }
+
 
 }

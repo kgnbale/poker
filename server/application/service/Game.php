@@ -162,6 +162,14 @@ class Game extends Service {
             return false;
         }
 
+        //过
+        if(count($input) == 0 && $room->lead['seat'] != $auth->seat) {
+            $room->leader = $seat==='a'?'b':($seat==='b'?'c':'a');
+            $this->msg = '过';
+            return true;
+        }
+
+
         //校验要出的牌是否存在
         $player = $room->$seat; $remainder = $player['poker'];
         foreach ($input as $v) {
@@ -175,7 +183,7 @@ class Game extends Service {
         }
 
         $poker = new Poker($input);
-        if(!$poker->compare(new Poker($room->lead))) {//需要压过的牌
+        if(!$poker->compare($room->lead)) {//需要压过的牌
             $this->code = 500;
             $this->msg = '出牌错误';
             return false;
@@ -196,7 +204,8 @@ class Game extends Service {
             'lead'=>$input
         ];
 
-        $room->leader = $seat==='a'?'b':($seat==='b'?'c':'a');
+        $poker->seat = $seat;//记录出牌人
+        $room->lead = $poker->mingle();
         return true;
     }
 

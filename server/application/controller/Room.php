@@ -107,10 +107,17 @@ class Room extends Controller {
                 $data['pocket'] = $room->pocket;
                 $data['leader'] = $room->leader;//当前该谁出牌
                 //当前需要大过的牌
-                //当前需要大过的玩家
+                $lead = $room->lead;
+                $data['lead'] = [
+                    'type'=>$lead['is'],
+                    'max'=>$lead['max'],
+                    'num'=>$lead['num'],
+                    'poker'=>$lead['poker'],
+                    'seat'=>$lead['seat'],
+                ];
             }
             else {
-                $data['call'] = $room->call;
+                $data['call'] = $room->call['who'];
             }
         }
         $this->success('获取成功','room-synchro',$data);

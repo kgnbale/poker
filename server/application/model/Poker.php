@@ -34,19 +34,36 @@ class Poker extends Collection {
         $this->num = count($pokerd);
     }
 
-    public function compare($last,Poker $poker) {
+    public function compare(array $poker) {
+        $poker = new Collection($poker);
         $auth = Auth::init();
-        //是否需要压牌
-        if($auth->name == $last) {
-            //不需要压牌，验证出牌规则
+
+        //不需要压牌，验证出牌规则
+        if($auth->seat == $poker->seat) {
             return $this->is;
         }
 
+        //如果是核弹
+        if($this->nbomb) {
+            $this->is = 'nbomb';
+            return true;
+        }
+
         //需要压牌，比较规则和大小
-
-        return true;
+        $rule = $poker->is;
+        if(!$this->$rule) {
+            if($this->bomb) {
+                $this->is = 'bomb';
+                return true;
+            }
+            return false;
+        }
+        $this->is = $rule;
+        if($this->max > $poker->max) {
+            return true;
+        }
+        return false;
     }
-
 
     protected function _is() {
         switch ($this->num) {
@@ -74,7 +91,6 @@ class Poker extends Collection {
         return false;
     }
 
-
     //顺子
     protected function _straight() {
         $poker = $this->poker;
@@ -88,6 +104,7 @@ class Poker extends Collection {
                 return false;
             }
         }
+        $this->max = $v['val'];
         return true;
     }
 
@@ -114,6 +131,7 @@ class Poker extends Collection {
                 return false;
             }
         }
+        $this->max = $v[0]['val'];
         return true;
     }
 
@@ -126,6 +144,7 @@ class Poker extends Collection {
         }
         list($a,$b,$c,$d) = $poker;
         if($a['val'] === $b['val'] && $b['val'] === $c['val'] && $c['val'] === $d['val']) {
+            $this->max = $a['val'];
             return true;
         }
         return false;
@@ -141,6 +160,7 @@ class Poker extends Collection {
 
         list($a,$b) = $poker;
         if($a['val'] === 19 && $b['val'] === 20) {
+            $this->max = $b['val'];
             return true;
         }
 
@@ -149,7 +169,9 @@ class Poker extends Collection {
 
     //个
     protected function _individual() {
-        if($this->num === 0) {
+        if($this->num === 1) {
+            $poker = $this->poker;
+            $this->max = $poker[0]['val'];
             return true;
         }
         return false;
@@ -164,12 +186,13 @@ class Poker extends Collection {
         }
         list($a,$b) = $poker;
         if($a['val'] === $b['val']) {
+            $this->max = $b['val'];
             return true;
         }
         return false;
     }
 
-
+    //飞机
     protected function _plane() {
         if($this->num % 3 === 0) {
             $chunk = $this->achunk;
@@ -219,6 +242,7 @@ class Poker extends Collection {
             if(isset($three[$k+1]) && $v+1 !== $three[$k+1]) {
                 break;
             }
+            $this->max = $v;
         }
         $length2 = 0;
         if($length !== $nthree) {
@@ -229,10 +253,10 @@ class Poker extends Collection {
                 }
 
             }
+            $this->max = $three[$nthree-1];
         }
         return $length > $length2?$length:$length2;
     }
-
 
     //火车
     protected function _train() {
@@ -254,7 +278,6 @@ class Poker extends Collection {
         }
         return false;
     }
-
 
     //计算每种面值的牌数
     protected function _achunk() {

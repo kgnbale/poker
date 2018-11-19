@@ -119,21 +119,22 @@ class Play extends Controller {
         $room = $lead->data;
         $this->success('出牌','play-lead',[
             'nexter'=>$room->leader,
-            'win'=>$room->win
+            'win'=>$room->win,
+            'type'=>$room->lead['is']
         ]);
 
         $player = $room->$seat;
-
         $this->roompush($room,$seat,'play-lead',[
             'seat'=>$seat,
             'poker'=>$player['lead'],
-            'nexter'=>$room->leader
+            'nexter'=>$room->leader,
+            'type'=>$room->lead['is']
         ]);
 
         $this->end($seat, $room);
     }
 
-    private function end($room) {
+    private function end($seat,$room) {
         $win = $room->win;
         if(!$win) {
             return false;

@@ -337,7 +337,7 @@ TODO
 |:-----  |:-------|:-----|-----  |
 |action  |ture    |sting   |请求动作,值固定为`play/lead`|
 |token   |ture    |sting   |登录成功后获取的token值|
-|poker   |ture    |sting   |为一组扑克ID，如'12,34,55,66'|
+|poker   |ture    |sting   |为一组扑克ID，如'12,34,55,66'，不出牌则为空字符串|
 
 ### 返回结果
 ``` javascript

@@ -111,11 +111,19 @@
 
 </main>
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="common.js"></script>
+<script src="websocket.js"></script>
 <script>
     var token = get('token')
+
+    var client = new Client(function (evt) {
+        console.log("Connected to WebSocket server.");
+        client.send({
+            action:'user',
+            token:token,
+        });
+    });
+
     function draw_room(room) {
         var join='';
         if(room.number < 3) {
@@ -144,8 +152,8 @@
         '            </div>\n' +
         '        </div>'
     }
-    
-    function reply_room(data) {
+
+    client.reply('room',function (data) {
         if(data.code) {
             alert(data.msg);
             return;
@@ -153,47 +161,19 @@
         $.each(data.rooms,function (i,room) {
             $("#rooms").append(draw_room(room));
         });
-    }
+    })
 
-    function reply_user(data) {
+    client.reply('user',function (data) {
         if(data.play == "room") {
             window.location.href='play.html?token='+token+'&id='+data.room
         }
         else {
-            websocket.send(JSON.stringify({
+            client.send({
                 action:'room',
                 token:token,
-            }));
+            });
         }
-    }
-
-    var websocket = new WebSocket(server);
-    websocket.onopen = function (evt) {
-        console.log("Connected to WebSocket server.");
-        websocket.send(JSON.stringify({
-            action:'user',
-            token:token,
-        }));
-    };
-    websocket.onclose = function (evt) {
-        console.log("Disconnected");
-    };
-    websocket.onmessage = function (evt) {
-        var data = JSON.parse(evt.data);
-        console.log(data);
-        switch (data.action) {
-            case 'reply-room':
-                reply_room(data);
-                break;
-            case 'reply-user':
-                reply_user(data);
-                break;
-        }
-    };
-    websocket.onerror = function (evt, e) {
-        console.log('Error occured: ' + evt.data);
-    };
-
+    })
 </script>
 </body>
 </html>

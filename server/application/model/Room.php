@@ -172,12 +172,28 @@ class Room extends Model {
         return json_decode($this->raw('lead'),true);
     }
 
+    //出牌
+    protected function ___lead($lead) {
+        $data['lead'] = array_merge($this->lead,$lead);
+        if(isset($lead['seat'])) {
+            $seat = $lead['seat'];
+            $data['leader'] = $seat==='a'?'b':($seat==='b'?'c':'a');
+            $this->tmp('leader',$data['leader']);
+        }
+        $data['lead'] = json_encode($data['lead']);
+        Redis::hMset('room:'.$this->id,$data);
+
+        return $lead;
+    }
+
     //设置地主
     protected function ___landowner($seat) {
         Redis::hMset('room:'.$this->id,[
-            'landowner'=>$seat,
-            'leader'=>$seat,
-            'lead'=>json_encode([]),
+            'landowner'=>$seat,//地主
+            'leader'=>$seat,//当前需要出牌的玩家
+            'lead'=>json_encode([
+                'seat'=>$seat,
+            ]), //出牌记录
             'win'=>0  //最先出完牌的人
         ]);
         return $seat;

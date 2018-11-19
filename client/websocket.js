@@ -27,7 +27,10 @@ function Client(open) {
 
     oTemp.websocket = websocket;
 
-
+    oTemp.event['reply-login-fail'] = function () {
+        alert('请重新登录')
+    }
+    
     oTemp.reply = function (action,func) {
         oTemp.event['reply-'+action] = function (data) {
             if(data.code) {
@@ -44,6 +47,20 @@ function Client(open) {
 
     oTemp.send = function (args) {
         oTemp.websocket.send(JSON.stringify(args));
+    }
+
+    oTemp.listen = function(action) {
+        var o = new Object;
+        o.action = action;
+        o.push = function (func) {
+            oTemp.push(o.action,func);
+            return o;
+        }
+        o.reply = function (func) {
+            oTemp.reply(o.action,func);
+            return o;
+        }
+        return o;
     }
 
     return oTemp;

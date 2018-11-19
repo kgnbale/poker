@@ -133,7 +133,7 @@
         border-color: blue!important;
     }
     #info {
-        max-height: 80px;
+        height: 120px;
         overflow-y: scroll;
         width: 100%;
     }
@@ -142,6 +142,13 @@
     }
     #send {
         cursor: pointer;
+    }
+    .card .card-header {
+        padding: .25rem 0.6rem;
+    }
+    .card .card-body {
+        padding: .25rem 0.6rem .55rem;
+
     }
 </style>
 <main role="main" class="container" style="max-width: 798px">
@@ -314,6 +321,7 @@
             if(data.landowner) {
                 //如果该我出牌，显示出牌按钮
                 if(data.leader == user.seat) {
+                    tips('该你出牌了！');
                     $("#lead").show();
                 }
             }
@@ -361,7 +369,7 @@
         }
     })
 
-    client.reply('room-enter',function (data) {
+    client.listen('room-enter').reply(function (data) {
         if(data.code) {
             console.log(data.msg);
             return;
@@ -372,25 +380,21 @@
         $.each({a:data.a,b:data.b,c:data.c},function (i,p) {
             $("#" + i + " strong").html(p.name);
             $("#coin-" + i).html(p.coin);
+            if(p.ready === 1) {
+                $("#prepare-" + i).html('ready');
+            }
         })
-    });
-
-    client.push('room-enter',function () {
+    }).push(function (data) {
         $("#" + data.seat + " strong").html(data.name);
     })
 
-    client.reply('room-quit',function (data) {
-        $("#room").html('房间');
-        $("#" + user.seat + " strong").html('等待玩家');
-        user.room = 0;
-        user.seat = 0;
-    })
-
-    client.push('room-quit',function (data) {
+    client.listen('room-quit').reply(function () {
+        window.location.href='room.html?token='+token
+    }).push(function (data) {
         $("#" + data.seat + " strong").html('等待玩家');
     })
 
-    client.reply('room-quit',function (data) {
+    client.listen('play-lead').reply(function (data) {
         leadlock = false;
         if(data.code){
             alert(data.msg);
@@ -407,11 +411,14 @@
         $("#info").append(info);
         $("#info").scrollTop($("#info")[0].scrollHeight);
         $("#lead").hide();
-    })
-
-    client.push('play-lead',function (data) {
+        tips('等待 '+data.nexter+' 出牌！');
+    }).push(function (data) {
         if(data.nexter == user.seat) {
+            tips('该你出牌了！');
             $("#lead").show();
+        }
+        else {
+            tips('等待 '+data.nexter+' 出牌！');
         }
         var info = drawPlayer(1,'赌王')+'<h6>';
         $.each(data.poker,function (i,p) {
@@ -422,7 +429,7 @@
         $("#info").scrollTop($("#info")[0].scrollHeight);
     })
 
-    client.reply('play-ready',function (data) {
+    client.listen('play-ready').reply(function (data) {
         if(data.ready) {
             $("#ready").html('取消准备');
             $("#prepare-" + user.seat).html('ready');
@@ -432,9 +439,7 @@
             $("#ready").html('准备');
             $("#prepare-" + user.seat).html('');
         }
-    })
-
-    client.push('play-ready',function (data) {
+    }).push(function (data) {
         if(data.ready) {
             $("#prepare-" + data.seat).html('ready');
         }
@@ -443,7 +448,13 @@
         }
     })
 
-    client.push('play-ready',function (data) {
+    client.listen('play-rob').reply(function (data) {
+        $("#rob").hide();
+        if(data.call) {
+            tips('等待座位'+data.call+'的玩家抢地主');
+        }
+
+    }).push(function (data) {
         if(data.landowner) {
             if(data.landowner == user.seat) {
                 //如果我是地主
@@ -470,18 +481,6 @@
         }
     })
 
-    client.reply('play-rob',function (data) {
-        if(data.code) {
-            alert(data.msg);
-            return;
-        }
-        $("#rob").hide();
-
-        if(data.call) {
-            tips('等待座位'+data.call+'的玩家抢地主');
-        }
-    })
-
     client.push('play-start',function (data) {
         var div = $("#poker");
         $.each(data.poker,function(k,poker){
@@ -501,12 +500,7 @@
         }
     })
 
-    client.push('chat-room',function (data) {
-        drawChat(data.seat,data.text)
-        $("#info").scrollTop($("#info")[0].scrollHeight);
-    })
-
-    client.reply('chat-room',function (data) {
+    client.listen('chat-room').reply(function (data) {
         if(data.code) {
             alert(data.msg);
             return;
@@ -514,33 +508,35 @@
         drawChat(user.name,$('#text').val())
         $('#text').val('');
         $("#info").scrollTop($("#info")[0].scrollHeight);
+    }).push(function (data) {
+        drawChat(data.seat,data.text)
+        $("#info").scrollTop($("#info")[0].scrollHeight);
     })
-
 
     //取消/准备
     $("#ready").click(function(){
-        websocket.send(JSON.stringify({
+        client.send({
             action:'play/ready',
             token:token,
-        }));
+        });
     });
 
     //抢地主
     $("#rob .yes").click(function(){
-        websocket.send(JSON.stringify({
+        client.send({
             action:'play/rob',
-            token:'{$token}',
+            token:token,
             rob:1
-        }));
+        });
     });
 
     //不抢
     $("#rob .no").click(function(){
-        websocket.send(JSON.stringify({
+        client.send({
             action:'play/rob',
             token:token,
             rob:0
-        }));
+        });
     });
 
     $("#poker").on("click",'img',function(){
@@ -556,11 +552,11 @@
 
     //过
     $("#lead .no").click(function(){
-        websocket.send(JSON.stringify({
+        client.send({
             action:'play/lead',
             token:token,
             poker:''
-        }));
+        });
     });
 
     //出牌
@@ -582,20 +578,19 @@
         if(!ids) {
             return;
         }
-        console.log(lead);
-        websocket.send(JSON.stringify({
+        client.send({
             action:'play/lead',
             token:token,
             poker:ids
-        }));
+        });
     });
 
     //退出房间
     $("#exit").click(function(){
-        websocket.send(JSON.stringify({
+        client.send({
             token:token,
             action:'room/quit',
-        }));
+        });
     });
 
     //发送
@@ -604,11 +599,11 @@
         if(!msg) {
             return;
         }
-        websocket.send(JSON.stringify({
+        client.send({
             action:'chat/room',
             token:token,
             text:msg
-        }));
+        });
     });
     //$('#end-info').modal()
 </script>
