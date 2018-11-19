@@ -93,6 +93,9 @@ class Poker extends Collection {
 
     //顺子
     protected function _straight() {
+        if($this->num < 5) {
+            return false;
+        }
         $poker = $this->poker;
         //判断起始位,开始的牌必须小于J，也就是低于11
         if($poker[0]['val'] > 10) {
@@ -110,6 +113,9 @@ class Poker extends Collection {
 
     //顺对
     protected function _straights() {
+        if($this->num < 6) {
+            return false;
+        }
         $poker = $this->poker;
         //判断起始位,开始的牌必须小于K，也就是低于13
         if($poker[0]['val'] > 12) {

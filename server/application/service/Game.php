@@ -151,9 +151,12 @@ class Game extends Service {
     //出牌
     protected function lead() {
         $input = $this->input('poker');
-        $input = explode(',',$input);
+
+        $input = $input?explode(',',$input):[];
 
         $auth = Auth::init(); $room = $auth->room; $seat = $auth->seat;
+
+        $this->data = $room;
 
         //校验是否该其出牌
         if($room->leader !== $seat) {
@@ -163,6 +166,10 @@ class Game extends Service {
         }
 
         //过
+        b('$input',$input);
+        b('count($input)',count($input));
+        b('lead-seat',$room->lead['seat']);
+        b('l$auth->seat',$auth->seat);
         if(count($input) == 0 && $room->lead['seat'] != $auth->seat) {
             $room->leader = $seat==='a'?'b':($seat==='b'?'c':'a');
             $this->msg = '过';
@@ -188,8 +195,6 @@ class Game extends Service {
             $this->msg = '出牌错误';
             return false;
         }
-
-        $this->data = $room;
 
         //检查剩余牌
         if(count($remainder) < 1) {
