@@ -193,7 +193,7 @@ class Game extends Service {
         $poker = new Poker($input);
         if(!$poker->compare($room->lead)) {//需要压过的牌
             $this->code = 4033;
-            $this->msg = '你的牌压不过上家啊';
+            $this->msg = '出牌错误';
             return false;
         }
 

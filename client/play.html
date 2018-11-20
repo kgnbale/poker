@@ -154,11 +154,6 @@
 <main role="main" class="container" style="max-width: 798px">
     <div class="card">
         <div class="card-header" id="tips">Featured</div>
-        <!--
-        <div style="min-height: 100px" class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded box-shadow">
-            <div id="info"></div>
-        </div>
-        -->
         <div class="card-body">
             <ul class="list-group list-group-flush" id="info">
                 <li class="list-group-item">hello:快点啊，我等的花都谢了</li>
@@ -166,14 +161,12 @@
                     <small>农民(赌王):</small>
                     <h6><span class="badge badge-primary">22</span>&nbsp;<span class="badge badge-primary">24</span>&nbsp;<span class="badge badge-primary">25</span>&nbsp;<span class="badge badge-primary">51</span>&nbsp;</h6>
                 </li>
+                <li class="list-group-item">
+                    <small>农民(赌王):</small>
+                    <h6><span class="badge badge-primary">22</span>&nbsp;<span class="badge badge-primary">24</span>&nbsp;<span class="badge badge-primary">25</span>&nbsp;<span class="badge badge-primary">51</span>&nbsp;</h6>
+                </li>
             </ul>
-            <!--
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-            -->
         </div>
-
         <div class="card-footer text-muted">
             <div class="input-group">
                 <input id="text" type="text" class="form-control" placeholder="请输入发送内容！">
@@ -181,19 +174,8 @@
                     <span class="input-group-text" id="send"> 发 送 </span>
                 </div>
             </div>
-            <!--
-            <div class="form-row">
-                <div class="col-11">
-                    <input type="text" class="form-control" placeholder="发送消息" required>
-                </div>
-                <div class="col-1">
-                    <button class="btn btn-secondary" type="submit">发送</button>
-                </div>
-            </div>-->
         </div>
-
     </div>
-
 
     <div class="my-3 p-3 bg-white rounded box-shadow" style="min-height: 250px">
         <h6 class="console border-bottom border-gray pb-2 mb-0">
@@ -496,7 +478,7 @@
     client.push('play-start',function (data) {
         var div = $("#poker");
         $.each(data.poker,function(k,poker){
-            div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/a'+poker.id+'.png">');
+            div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/'+poker.id+'.png">');
         });
         $("#prepare-a").html('');
         $("#prepare-b").html('');
@@ -510,6 +492,10 @@
         else {
             tips('等待座位'+data.call+'的玩家叫地主！');
         }
+    })
+
+    client.push('play-end',function (data) {
+        $('#end-info').modal()
     })
 
     client.listen('chat-room').reply(function (data) {
@@ -619,7 +605,6 @@
             text:msg
         });
     });
-    //$('#end-info').modal()
 </script>
 </body>
 </html>
