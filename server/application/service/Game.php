@@ -198,6 +198,7 @@ class Game extends Service {
         }
 
         //检查剩余牌
+        b('$remainder',count($remainder));
         if(count($remainder) < 1) {
             //结束，赢了
             $room->win = $seat;
@@ -216,6 +217,66 @@ class Game extends Service {
     }
 
     protected function end($room) {
+        $win = $room->win;
+        //低分
+        $score = 3;
+
+        //地主
+        $landowner = $room->landowner;
+
+        //胜利者
+        $winer = $room->$win;
+
+        //农民
+        $farmer = $landowner==='a'?['b','c']:($landowner==='b'?['a','c']:['a','b']);
+
+        $push = [];
+
+        if($win === $room->landowner) {
+            $push['landowner']=1;
+            $winscore = 0;
+            foreach ($farmer as $v) {
+                $loser = $room->$v;
+                $tmp = $loser['multiple'] * $winer['multiple'] * $score;
+                $push[$v]= -$tmp;
+                $winscore +=  $tmp;
+            }
+            $push[$landowner] = $winscore;
+        }
+        else{
+            $push['landowner']=0;
+            $winscore = 0;
+            foreach ($farmer as $v) {
+                $loser = $room->$v;
+                $tmp = $loser['multiple'] * $winer['multiple'] * $score;
+                $push[$v]= $tmp;
+                $winscore -=  $tmp;
+            }
+            $push[$landowner] = $winscore;
+        }
+
+        //清理房间信息
+        Redis::hdel('room:'.$room->id,
+            'call',
+            'landowner',
+            'lead',
+            'pocket',
+            'start',
+            'win'
+        );
+        $init = ['status'=>'wait'];
+        foreach (['a','b','c'] as $v) {
+            $player = $room->$v;
+            $init[$v] = json_encode([
+                'fd'=>$player['fd'],
+                'name'=>$player['name'],
+                'coin'=>$player['coin']-$push[$v],
+                'ready'=>$player['ready']
+            ]);
+        }
+        Redis::hmset('room:'.$room->id,$init);
+        $this->data = $push;
+        return true;
 
     }
 

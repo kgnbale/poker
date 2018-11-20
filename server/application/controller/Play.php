@@ -90,7 +90,7 @@ class Play extends Controller {
             'call' => $call
         ]);
 
-        $landowner = $room->landowner;
+        $landowner = $room->landowner?:0;
 
         $seats = ['a','b','c'];
         //如果地主没有产生，则只通知另外两个玩家
@@ -99,11 +99,11 @@ class Play extends Controller {
         foreach ($seats as $v) {
             $player = $room->$v;
             $push = [];
-            $push['landowner'] = $landowner?:0;
+            $push['landowner'] = $landowner;
             $push['call'] = $call;
             if($landowner) {
-                foreach ($room->pocket as $v) {
-                    $push['pocket'][] = $v;
+                foreach ($room->pocket as $p) {
+                    $push['pocket'][] = $p;
                 }
                 $landowner === $v and $push['poker'] = $player['poker'];
             }
@@ -132,50 +132,18 @@ class Play extends Controller {
             'type'=>$room->lead['is']
         ]);
 
-        $this->end($seat, $room);
+        $this->end($room);
     }
 
-    private function end($seat,$room) {
+    private function end($room) {
         $win = $room->win;
         if(!$win) {
             return false;
         }
-        //低分
-        $score = 3;
 
-        //地主
-        $landowner = $room->landowner;
+        $end = Game::withRun('lead',[$room]);
 
-        //胜利者
-        $winer = $room->$win;
-
-        //农民
-        $farmer = $landowner==='a'?['b','c']:($landowner==='b'?['a','c']:['a','b']);
-
-        $push = [];
-
-        if($win === $room->landowner) {
-            $push['landowner']=1;
-            $winscore = 0;
-            foreach ($farmer as $v) {
-                $loser = $room->$v;
-                $tmp = $loser['multiple'] * $winer['multiple'] * $score;
-                $push[$v]= -$tmp;
-                $winscore +=  $tmp;
-            }
-            $push[$landowner] = $winscore;
-        }
-        else{
-            $push['landowner']=0;
-            $winscore = 0;
-            foreach ($farmer as $v) {
-                $loser = $room->$v;
-                $tmp = $loser['multiple'] * $winer['multiple'] * $score;
-                $push[$v]= $tmp;
-                $winscore -=  $tmp;
-            }
-            $push[$landowner] = $winscore;
-        }
+        $push = $end->data;
 
         //平民和地主
         foreach (['a','b','c'] as $v) {

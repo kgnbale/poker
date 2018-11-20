@@ -51,7 +51,7 @@ class Room extends Model {
     private static function create($id) {
         $room = [
             'id'=>$id,
-            //等待wait,//大牌阶段startd，//end结束清算阶段
+            //等待wait,//开始阶段startd，//end结束清算阶段
             'status'=>'wait',
             //starting
 
@@ -59,11 +59,6 @@ class Room extends Model {
             'a'=>0, //座位A
             'b'=>0, //座位B
             'c'=>0, //座位C
-
-            //地主
-            //'landseat'=>0,
-            //最后出牌的位置
-            //'laster'=>0,
         ];
         Redis::hMset('room:'.$id,$room);
         return $room;

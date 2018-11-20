@@ -155,17 +155,7 @@
     <div class="card">
         <div class="card-header" id="tips">Featured</div>
         <div class="card-body">
-            <ul class="list-group list-group-flush" id="info">
-                <li class="list-group-item">hello:快点啊，我等的花都谢了</li>
-                <li class="list-group-item">
-                    <small>农民(赌王):</small>
-                    <h6><span class="badge badge-primary">22</span>&nbsp;<span class="badge badge-primary">24</span>&nbsp;<span class="badge badge-primary">25</span>&nbsp;<span class="badge badge-primary">51</span>&nbsp;</h6>
-                </li>
-                <li class="list-group-item">
-                    <small>农民(赌王):</small>
-                    <h6><span class="badge badge-primary">22</span>&nbsp;<span class="badge badge-primary">24</span>&nbsp;<span class="badge badge-primary">25</span>&nbsp;<span class="badge badge-primary">51</span>&nbsp;</h6>
-                </li>
-            </ul>
+            <ul class="list-group list-group-flush" id="info"></ul>
         </div>
         <div class="card-footer text-muted">
             <div class="input-group">
@@ -229,21 +219,20 @@
     </div>
 </main>
 <!-- Modal -->
-<div class="modal fade" id="end-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="end-info" tabindex="-1" role="dialog" aria-labelledby="end-info-title" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h5 class="modal-title" id="end-info-title">Modal title</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                ...
+                <ul class="list-group list-group-flush" id="end-info-content"></ul>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-sm btn-primary">知道了</button>
             </div>
         </div>
     </div>
@@ -266,6 +255,7 @@
             token:token,
         });
     });
+    var landowner = 0;//地主
 
     function drawPlayer(seat) {
         return '<small>座位('+seat+'):</small>&nbsp;';
@@ -305,6 +295,7 @@
         if(data.status == 'startd') {
             $("#ready").hide();
             if(data.landowner) {
+                landowner = data.landowner;
                 //如果该我出牌，显示出牌按钮
                 if(data.leader == user.seat) {
                     tips('该你出牌了！');
@@ -451,6 +442,7 @@
     }).push(function (data) {
         if(data.landowner) {
             if(data.landowner == user.seat) {
+                landowner = user.seat;
                 //如果我是地主
                 tips('你抢到地主了，请出牌！');
                 $("#lead").show();
@@ -461,6 +453,7 @@
                 });
             }
             else {
+                landowner = data.landowner;
                 tips('座位'+data.landowner+'的玩家成为地主，等待其出牌！');
             }
         }
@@ -495,6 +488,18 @@
     })
 
     client.push('play-end',function (data) {
+        $win = data.landowner && (landowner == user.seat?true:false)
+        if($win) {
+            $('#end-info-title').html('恭喜你赢了');
+        }
+        else {
+            $('#end-info-title').html('你输了');
+        }
+        $info = '';
+        $.each(['a','b','c'],function (i,v) {
+            $info += '<li class="list-group-item">玩家'+i+': '+data[v]+'</li>';
+        })
+        $('#end-info-content').append($info);
         $('#end-info').modal()
     })
 

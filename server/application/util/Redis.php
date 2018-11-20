@@ -17,6 +17,8 @@ use nb\Cache;
  * @link https://nb.cx
  * @author: collin <collin@nb.cx>
  * @date: 2018/10/12
+ *
+ *
  */
 class Redis extends Cache {
 
@@ -58,7 +60,18 @@ class Redis extends Cache {
     }
 
     public static function hmset($key,$data) {
-        self::driver()->hmset($key,$data);
+        return self::driver()->hmset($key,$data);
+    }
+
+    /**
+     * @param $key
+     * @param $hashKey1
+     * @param null $hashKey2
+     * @param null $hashKeyN
+     * @return mixed
+     */
+    public static function hdel($key, $hashKey1, $hashKey2 = null, $hashKeyN = null) {
+        return call_user_func_array([self::driver(),'hdel'],func_get_args());
     }
 
 }
