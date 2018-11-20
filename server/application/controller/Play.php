@@ -99,10 +99,12 @@ class Play extends Controller {
         foreach ($seats as $v) {
             $player = $room->$v;
             $push = [];
-            $push['landowner'] = (int)$landowner;
+            $push['landowner'] = $landowner?:0;
             $push['call'] = $call;
             if($landowner) {
-                $push['pocket'] = $room->pocket;
+                foreach ($room->pocket as $v) {
+                    $push['pocket'][] = $v;
+                }
                 $landowner === $v and $push['poker'] = $player['poker'];
             }
             $this->push($player['fd'],'play-rob',$push);

@@ -102,9 +102,11 @@ class Room extends Controller {
             ];
         }
         if($room->status === 'startd') {
-            $data['landowner'] = $room->landowner;
+            $data['landowner'] = $room->landowner?:0;
             if($data['landowner']) {
-                $data['pocket'] = $room->pocket;
+                foreach ($room->pocket as $v) {
+                    $data['pocket'][] = $v;
+                }
                 $data['leader'] = $room->leader;//当前该谁出牌
                 //当前需要大过的牌
                 $lead = $room->lead;
