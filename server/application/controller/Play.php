@@ -141,7 +141,7 @@ class Play extends Controller {
             return false;
         }
 
-        $end = Game::withRun('lead',[$room]);
+        $end = Game::withRun('end',[$room]);
 
         $push = $end->data;
 

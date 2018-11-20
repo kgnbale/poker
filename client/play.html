@@ -232,7 +232,7 @@
                 <ul class="list-group list-group-flush" id="end-info-content"></ul>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-primary">知道了</button>
+                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">知道了</button>
             </div>
         </div>
     </div>
@@ -488,7 +488,7 @@
     })
 
     client.push('play-end',function (data) {
-        $win = data.landowner && (landowner == user.seat?true:false)
+        $win = data.landowner?(landowner == user.seat?true:false):(landowner == user.seat?false:true)
         if($win) {
             $('#end-info-title').html('恭喜你赢了');
         }
@@ -497,7 +497,7 @@
         }
         $info = '';
         $.each(['a','b','c'],function (i,v) {
-            $info += '<li class="list-group-item">玩家'+i+': '+data[v]+'</li>';
+            $info += '<li class="list-group-item">玩家'+v+': '+data[v]+'</li>';
         })
         $('#end-info-content').append($info);
         $('#end-info').modal()

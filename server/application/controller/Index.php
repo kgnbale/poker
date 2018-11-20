@@ -28,34 +28,4 @@ class Index extends Controller {
         $this->display(__APP__.'index');
     }
 
-    //洗牌
-    public function shuffle(){
-        $tmp = $arr = Config::$o->poker;
-        foreach($arr as $k=>$v){
-            $index = rand(0,54 - $k -1);
-            $key = array_search($tmp[$index], $arr);
-            $cards[$key] = $tmp[$index];
-            unset($tmp[$index]);
-            $tmp = array_values($tmp);
-        }
-
-        //玩家1
-        $a = array_slice($cards, 3, 17, true);
-        ksort($a);
-
-        //玩家2
-        $b =array_slice($cards, 20, 17, true);
-        ksort($b);
-
-        //玩家3
-        $c = array_slice($cards, 37, 17, true);
-        ksort($c);
-
-        $d = array_slice($cards, 0, 3, true);
-        ksort($d);
-
-        e([$a,$b,$c,$d]);
-    }
-
-
 }

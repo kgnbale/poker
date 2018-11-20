@@ -53,8 +53,6 @@ class Room extends Model {
             'id'=>$id,
             //等待wait,//开始阶段startd，//end结束清算阶段
             'status'=>'wait',
-            //starting
-
             //牌桌座位
             'a'=>0, //座位A
             'b'=>0, //座位B
