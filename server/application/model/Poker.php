@@ -28,9 +28,10 @@ class Poker extends Collection {
         //按战力至从小到大
         rsort($pokerd);
         foreach ($pokerd as &$v) {
-            $v = $poker[$v];
+            $v = $poker[$v-1];
         }
         $this->poker = $pokerd;
+        b('$this->poker',$this->poker);
         $this->num = count($pokerd);
     }
 
@@ -66,29 +67,36 @@ class Poker extends Collection {
     }
 
     protected function _is() {
+        $is = false;
         switch ($this->num) {
             case 1:
                 //个
-                return 'individual';
+                $is = $this->individual?'individual':false;
+                break;
             case 2:
                 //对子，核弹
-                return $this->couplet?'couplet':($this->nbomb?"nbomb":false);
+                $is = $this->couplet?'couplet':($this->nbomb?"nbomb":false);
+                break;
             case 3:
                 //三不带
-                return $this->plane?'plane':false;
+                $is = $this->plane?'plane':false;
+                break;
             case 4:
                 //三带一，炸弹
-                return $this->bomb?'bomb':($this->plane?'plane':false);
+                $is = $this->bomb?'bomb':($this->plane?'plane':false);
+                break;
             case 6:
             case 8:
                 if($this->train) {
-                    return 'train';
+                    $is = 'train';
+                    break;
                 }
             default:
                 //顺子,顺对
-                return $this->straights?'straights':($this->straight?'straight':($this->plane?'plane':false));
+                $is = $this->straights?'straights':($this->straight?'straight':($this->plane?'plane':false));
+                break;
         }
-        return false;
+        return $is;
     }
 
     //顺子

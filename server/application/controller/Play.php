@@ -119,7 +119,6 @@ class Play extends Controller {
         $room = $lead->data;
         $this->success('出牌','play-lead',[
             'nexter'=>$room->leader,
-            'win'=>$room->win,
             'type'=>$room->lead['is']
         ]);
 

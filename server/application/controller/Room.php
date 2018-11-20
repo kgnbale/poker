@@ -108,13 +108,21 @@ class Room extends Controller {
                 $data['leader'] = $room->leader;//当前该谁出牌
                 //当前需要大过的牌
                 $lead = $room->lead;
-                $data['lead'] = [
-                    'type'=>$lead['is'],
-                    'max'=>$lead['max'],
-                    'num'=>$lead['num'],
-                    'poker'=>$lead['poker'],
-                    'seat'=>$lead['seat'],
-                ];
+                if(isset($lead['is'])) {
+                    $data['lead'] = [
+                        'type'=>$lead['is'],
+                        'max'=>$lead['max'],
+                        'num'=>$lead['num'],
+                        'poker'=>$lead['poker'],
+                        'seat'=>$lead['seat'],
+                    ];
+                }
+                else{
+                    $data['lead'] = [
+                        'seat'=>$lead['seat'],
+                        'poker'=>[],
+                    ];
+                }
             }
             else {
                 $data['call'] = $room->call['who'];

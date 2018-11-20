@@ -160,7 +160,7 @@ class Game extends Service {
 
         //校验是否该其出牌
         if($room->leader !== $seat) {
-            $this->code = 500;
+            $this->code = 4035;
             $this->msg = '还没有到出牌的时间';
             return false;
         }
@@ -168,33 +168,32 @@ class Game extends Service {
         //过
         if(count($input) == 0) {
             if($room->lead['seat'] === $auth->seat) {
-                $this->code = 500;
+                $this->code = 4036;
                 $this->msg = '你必须出牌！';
                 return false;
             }
+            $room->$seat = ['lead'=>$input];
             $room->leader = $seat==='a'?'b':($seat==='b'?'c':'a');
             $this->msg = '过';
             return true;
         }
 
-
-
         //校验要出的牌是否存在
         $player = $room->$seat; $remainder = $player['poker'];
         foreach ($input as $v) {
-            if(isset($remainder[$v])) {
-                unset($remainder[$v]);
+            if(isset($remainder[$v-1])) {
+                unset($remainder[$v-1]);
                 continue;
             }
-            $this->code = 500;
+            $this->code = 4037;
             $this->msg = '非法出牌';
             return false;
         }
 
         $poker = new Poker($input);
         if(!$poker->compare($room->lead)) {//需要压过的牌
-            $this->code = 500;
-            $this->msg = '出牌错误';
+            $this->code = 4033;
+            $this->msg = '你的牌压不过上家啊';
             return false;
         }
 

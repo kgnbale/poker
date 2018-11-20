@@ -162,8 +162,10 @@
         <div class="card-body">
             <ul class="list-group list-group-flush" id="info">
                 <li class="list-group-item">hello:快点啊，我等的花都谢了</li>
-                <li class="list-group-item">Dapibus ac facilisis in</li>
-                <li class="list-group-item">Vestibulum at eros</li>
+                <li class="list-group-item">
+                    <small>农民(赌王):</small>
+                    <h6><span class="badge badge-primary">22</span>&nbsp;<span class="badge badge-primary">24</span>&nbsp;<span class="badge badge-primary">25</span>&nbsp;<span class="badge badge-primary">51</span>&nbsp;</h6>
+                </li>
             </ul>
             <!--
             <h5 class="card-title">Special title treatment</h5>
@@ -267,6 +269,7 @@
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="poker.js"></script>
 <script src="common.js"></script>
 <script src="websocket.js"></script>
 <script>
@@ -282,12 +285,13 @@
         });
     });
 
-    function drawPlayer(seat,name) {
-        return '<small>农民('+name+'):</small>&nbsp;';
+    function drawPlayer(seat) {
+        return '<small>座位('+seat+'):</small>&nbsp;';
     }
 
-    function drawPoker(p) {
-        return '<span class="badge badge-primary">'+p+'</span>&nbsp;';
+    function drawPoker(id) {
+        var poker = cards[parseInt(id)-1];
+        return '<span class="badge badge-primary">'+poker.name+'</span>&nbsp;';
     }
     
     function drawChat(name,msg) {
@@ -354,7 +358,7 @@
             var player = data[user.seat];
             var div = $("#poker");
             $.each(player.poker,function(k,poker){
-                div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/a'+poker.id+'.png">');
+                div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/'+poker.id+'.png">');
             });
 
             if(data.landowner) {
@@ -399,13 +403,18 @@
 
     client.listen('play-lead').reply(function (data) {
         leadlock = false;
-        var info = drawPlayer(1,'赌王')+'<h6>';
-        for(var x in lead) {
-            info+=drawPoker(lead[x].val);
-            $("#"+lead[x].id).remove();
+        var info = '<li class="list-group-item">'+drawPlayer(user.seat)+'<h6>';
+        if(lead.length == 0) {
+            info+='<span class="badge badge-secondary">不要</span>&nbsp;';
         }
-        lead = [];
-        info+='</h6>';
+        else {
+            for(var x in lead) {
+                info+=drawPoker(lead[x].id);
+                $("#"+lead[x].id).remove();
+            }
+            lead = [];
+        }
+        info+='</h6></li>';
         $("#info").append(info);
         $("#info").scrollTop($("#info")[0].scrollHeight);
         $("#lead").hide();
@@ -418,11 +427,16 @@
         else {
             tips('等待 '+data.nexter+' 出牌！');
         }
-        var info = drawPlayer(1,'赌王')+'<h6>';
-        $.each(data.poker,function (i,p) {
-            info+=drawPoker(p);
-        })
-        info+='</h6>';
+        var info = '<li class="list-group-item">'+drawPlayer(data.seat)+'<h6>';
+        if(data.poker.length == 0) {
+            info+='<span class="badge badge-secondary">不要</span>&nbsp;';
+        }
+        else {
+            $.each(data.poker,function (i,p) {
+                info+=drawPoker(p);
+            })
+        }
+        info+='</h6></li>';
         $("#info").append(info);
         $("#info").scrollTop($("#info")[0].scrollHeight);
     })
@@ -461,7 +475,7 @@
                 var div = $("#poker");
                 div.empty();
                 $.each(data.poker,function(k,poker){
-                    div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/a'+poker.id+'.png">');
+                    div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/'+poker.id+'.png">');
                 });
             }
             else {
@@ -550,6 +564,7 @@
 
     //过
     $("#lead .no").click(function(){
+        lead = [];
         client.send({
             action:'play/lead',
             token:token,
