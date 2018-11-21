@@ -150,10 +150,13 @@
         padding: .25rem 0.6rem .55rem;
 
     }
+    .landowner strong{
+        color: red;
+    }
 </style>
 <main role="main" class="container" style="max-width: 798px">
     <div class="card">
-        <div class="card-header" id="tips">Featured</div>
+        <div class="card-header" id="tips">请准备游戏！</div>
         <div class="card-body">
             <ul class="list-group list-group-flush" id="info"></ul>
         </div>
@@ -187,33 +190,33 @@
     <div class="my-3 p-3 bg-white rounded box-shadow">
         <h6 class="border-bottom border-gray pb-2 mb-0">房间成员</h6>
         <div class="media text-muted pt-3" id="a">
-            <!--
-            <img style="width: 32px;height: 32px" src="/public/logo/farmer.png" alt="" class="mr-2 rounded">
-            -->
+            <span class="mr-2 rounded">A</span>
             <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <strong class="text-gray-dark">等待玩家</strong>
                     <a id="prepare-a"></a>
                 </div>
-                <span id="coin-a" class="d-block">0</span>
+                <div class="info"></div>
             </div>
         </div>
         <div class="media text-muted pt-3" id="b">
+            <span class="mr-2 rounded">B</span>
             <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <strong class="text-gray-dark">等待玩家</strong>
                     <a id="prepare-b"></a>
                 </div>
-                <span id="coin-b" class="d-block">0</span>
+                <div class="info"></div>
             </div>
         </div>
         <div class="media text-muted pt-3" id="c">
+            <span class="mr-2 rounded">C</span>
             <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                 <div class="d-flex justify-content-between align-items-center w-100">
                     <strong class="text-gray-dark">等待玩家</strong>
                     <a id="prepare-c"></a>
                 </div>
-                <span id="coin-c" class="d-block">0</span>
+                <div class="info"></div>
             </div>
         </div>
     </div>
@@ -266,12 +269,27 @@
         return '<span class="badge badge-primary">'+poker.name+'</span>&nbsp;';
     }
     
-    function drawChat(name,msg) {
+    function drawChat(seat,msg) {
+        var name = $("#" + seat + " strong").html();
         $("#info").append('<li class="list-group-item">'+name+' : '+msg+'</li>');
     }
     
     function tips(msg) {
         $("#tips").html(msg);
+    }
+
+    function drawLead(seat,poker,residue) {
+        var info = '';
+        if(poker.length < 1) {
+            info = '<span class="badge badge-secondary">要不起！</span>';
+        }
+        else {
+            $.each(poker,function (i,id) {
+                info += drawPoker(id);
+            })
+        }
+        $("#" + seat + " .info").html(info);
+        $("#prepare-" + seat).html(residue);
     }
 
     client.reply('user',function (data) {
@@ -296,6 +314,7 @@
             $("#ready").hide();
             if(data.landowner) {
                 landowner = data.landowner;
+                $('#'+landowner).addClass('landowner');
                 //如果该我出牌，显示出牌按钮
                 if(data.leader == user.seat) {
                     tips('该你出牌了！');
@@ -310,32 +329,17 @@
                     $("#rob").show();
                 }
             }
-        }
-
-        $.each({a:data.a,b:data.b,c:data.c},function (i,p) {
-            $("#" + i + " strong").html(p.name);
-            $("#coin-" + i).html(p.coin);
-
-            if(p.ready) {
-                $("#prepare-" + i).html('ready');
-                if(i == user.seat) $("#ready").html('取消准备');
-            }
-            else {
-                if(i == user.seat) $("#ready").html('准备');
-            }
-        })
-
-        $("#room").html(data.name);
-
-        if(data.status == 'startd') {
             var player = data[user.seat];
             var div = $("#poker");
             $.each(player.poker,function(k,poker){
                 div.append('<img id="'+poker.id+'" val="'+poker.name+'" src="card/'+poker.id+'.png">');
             });
-
             if(data.landowner) {
-
+                $.each({a:data.a,b:data.b,c:data.c},function (i,p) {
+                    $("#" + i + " strong").html(p.name);
+                    drawLead(i,p.lead,p.residue);
+                })
+                $("#" + data.leader + " .info").html('<span>等待出牌！</span>');
             }
             else {
                 //叫地主
@@ -347,6 +351,18 @@
                 }
             }
         }
+        $.each({a:data.a,b:data.b,c:data.c},function (i,p) {
+            $("#" + i + " strong").html(p.name);
+            if(p.ready) {
+                $("#prepare-" + i).html('ready');
+                if(i == user.seat) $("#ready").html('取消准备');
+            }
+            else {
+                if(i == user.seat) $("#ready").html('准备');
+            }
+        })
+        $("#room").html(data.name+ '--座位'+ user.seat);
+
     })
 
     client.listen('room-enter').reply(function (data) {
@@ -377,14 +393,20 @@
     client.listen('play-lead').reply(function (data) {
         leadlock = false;
         var info = '<li class="list-group-item">'+drawPlayer(user.seat)+'<h6>';
+
         if(lead.length == 0) {
             info+='<span class="badge badge-secondary">不要</span>&nbsp;';
+            drawLead(user.seat,[],data.residue);
         }
         else {
+            var tmp = new Array();
             for(var x in lead) {
                 info+=drawPoker(lead[x].id);
                 $("#"+lead[x].id).remove();
+                tmp[x] = lead[x].id;
             }
+            console.log(user.seat,tmp,data.residue);
+            drawLead(user.seat,tmp,data.residue);
             lead = [];
         }
         info+='</h6></li>';
@@ -392,6 +414,7 @@
         $("#info").scrollTop($("#info")[0].scrollHeight);
         $("#lead").hide();
         tips('等待 '+data.nexter+' 出牌！');
+        $("#" + data.nexter + " .info").html('<span>等待出牌！</span>');
     }).push(function (data) {
         if(data.nexter == user.seat) {
             tips('该你出牌了！');
@@ -412,6 +435,8 @@
         info+='</h6></li>';
         $("#info").append(info);
         $("#info").scrollTop($("#info")[0].scrollHeight);
+        drawLead(data.seat,data.poker,data.residue);
+        $("#" + data.nexter + " .info").html('<span>等待出牌！</span>');
     })
 
     client.listen('play-ready').reply(function (data) {
@@ -456,6 +481,8 @@
                 landowner = data.landowner;
                 tips('座位'+data.landowner+'的玩家成为地主，等待其出牌！');
             }
+            $('#'+landowner).addClass('landowner');
+            $("#prepare-" + landowner).html('20');
         }
         else {
             if(data.call == user.seat) {
@@ -485,6 +512,9 @@
         else {
             tips('等待座位'+data.call+'的玩家叫地主！');
         }
+        $.each(['a','b','c'],function (i,v) {
+            $("#prepare-" + v).html('17');
+        })
     })
 
     client.push('play-end',function (data) {
@@ -500,7 +530,17 @@
             $info += '<li class="list-group-item">玩家'+v+': '+data[v]+'</li>';
         })
         $('#end-info-content').append($info);
-        $('#end-info').modal()
+        $('#end-info').modal();
+        $('#end-info').on('hidden.bs.modal', function (e) {
+            tips('请准备游戏！');
+            $("#ready").show();
+            $("#poker").html('');
+            $.each(['a','b','c'],function (i,v) {
+                $("#" + v + " .info").html('');
+                $("#prepare-" + v).html('');
+            })
+        })
+
     })
 
     client.listen('chat-room').reply(function (data) {
@@ -508,7 +548,7 @@
             alert(data.msg);
             return;
         }
-        drawChat(user.name,$('#text').val())
+        drawChat(user.seat,$('#text').val())
         $('#text').val('');
         $("#info").scrollTop($("#info")[0].scrollHeight);
     }).push(function (data) {
@@ -610,6 +650,7 @@
             text:msg
         });
     });
+
 </script>
 </body>
 </html>

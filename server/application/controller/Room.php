@@ -82,32 +82,38 @@ class Room extends Controller {
             'name'=>$room->name,
             'status'=>$room->status,
         ];
+        //是否已经叫完地主
+        $landowner = $room->landowner?:0;
         foreach (['a','b','c'] as $v) {
             $seat = $room->$v;
             if(!$seat) {
                 $data[$v] = [];
                 continue;
             }
-
             if($v === $auth->seat) {
                 $data[$v] = $seat;
-                continue;
             }
-
-            $data[$v] = [
-                'coin'=>$seat['coin'],
-                'name'=>$seat['name'],
-                'ready'=>$seat['ready'],
-                'lead'=>$seat['lead']
-            ];
+            else {
+                $data[$v] = [
+                    'coin'=>$seat['coin'],
+                    'name'=>$seat['name'],
+                    'ready'=>$seat['ready'],
+                ];
+            }
+            if($landowner) {
+                $data[$v]['lead'] = $seat['lead'];
+                $data[$v]['residue'] = count($seat['poker']);
+            }
         }
         if($room->status === 'startd') {
-            $data['landowner'] = $room->landowner?:0;
+            $data['landowner'] = $landowner;
             if($data['landowner']) {
+                //底牌
                 foreach ($room->pocket as $v) {
                     $data['pocket'][] = $v;
                 }
-                $data['leader'] = $room->leader;//当前该谁出牌
+                //当前该谁出牌
+                $data['leader'] = $room->leader;
                 //当前需要大过的牌
                 $lead = $room->lead;
                 if(isset($lead['is'])) {

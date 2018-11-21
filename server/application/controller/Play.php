@@ -119,17 +119,21 @@ class Play extends Controller {
 
         $seat = Auth::init()->seat;
         $room = $lead->data;
+        $player = $room->$seat;
+        $residue = count($player['poker']);
         $this->success('出牌','play-lead',[
             'nexter'=>$room->leader,
-            'type'=>$room->lead['is']
+            'type'=>$room->lead['is'],
+            'residue'=>$residue
         ]);
 
-        $player = $room->$seat;
+
         $this->roompush($room,$seat,'play-lead',[
             'seat'=>$seat,
             'poker'=>$player['lead'],
             'nexter'=>$room->leader,
-            'type'=>$room->lead['is']
+            'type'=>$room->lead['is'],
+            'residue'=>$residue
         ]);
 
         $this->end($room);
