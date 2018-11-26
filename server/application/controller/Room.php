@@ -91,7 +91,13 @@ class Room extends Controller {
                 continue;
             }
             if($v === $auth->seat) {
+                $tempPoker = [];
+                foreach ($seat['poker'] as $p) {
+                    $tempPoker[] = $p;
+                }
+                $seat['poker'] = $tempPoker;
                 $data[$v] = $seat;
+
             }
             else {
                 $data[$v] = [
