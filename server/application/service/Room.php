@@ -103,7 +103,7 @@ class Room extends Service {
             if($v->number == 2) {
                 return $v->id;
             }
-            $stack[$v->number] = $v->id;
+            $stack[$v->number][] = $v->id;
         }
 
         //如果有一人的房间
