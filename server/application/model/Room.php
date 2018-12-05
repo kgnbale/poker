@@ -142,7 +142,7 @@ class Room extends Model {
         if($seat) {
             return json_decode($seat,true);
         }
-        return [];
+        return 0;
     }
 
     private function setSeat($seat,$player) {

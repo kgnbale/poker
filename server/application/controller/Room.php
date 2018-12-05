@@ -87,7 +87,7 @@ class Room extends Controller {
         foreach (['a','b','c'] as $v) {
             $seat = $room->$v;
             if(!$seat) {
-                $data[$v] = [];
+                $data[$v] = 0;
                 continue;
             }
             if($v === $auth->seat) {
