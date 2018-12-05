@@ -147,7 +147,7 @@ class Room extends Model {
 
     private function setSeat($seat,$player) {
         if($player) {
-            $player = array_merge($this->$seat,$player);
+            $player = array_merge($this->$seat?:[],$player);
             Redis::hMset('room:'.$this->id,[$seat=>json_encode($player)]);
             return $player;
         }
