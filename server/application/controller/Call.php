@@ -27,7 +27,7 @@ class Call {
         /**
          * 支付通知验签demo
          */
-        $pay = Request::formx('post');
+        $pay = Request::form('post');
         /**
          * 注意：$_POST数据如果服务器没有自动处理urldecode，请做一次urldecode(参考rfc1738标准)处理
          */
@@ -48,18 +48,18 @@ class Call {
         $time = time();
 
         //支付用户信息
-        $user = \model\User::name($pay->user_id);
+        $user = \model\User::name($pay['user_id']);
 
-        $serial = md5($user->id.$pay->order_id);
+        $serial = md5($user->id.$pay['order_id']);
         $order = Order::find('serial=?',$serial);
         if($order->empty) {
             $order = [
                 'serial'=>$serial,
-                'order_id'=>$pay->order_id,
-                'order_status'=>$pay->status,
+                'order_id'=>$pay['order_id'],
+                'order_status'=>$pay['status'],
                 'uid'=>$user->id,
-                'number'=>$pay->product_count,
-                'product_id'=>$pay->product_id,
+                'number'=>$pay['product_count'],
+                'product_id'=>$pay['product_id'],
                 'status'=>1,
                 'post'=>$post,
                 'ct'=>$time,
@@ -76,17 +76,17 @@ class Call {
         }
 
         $plist = load('product');
-        $local = $plist[$pay->product_id];
+        $local = $plist[$pay['product_id']];
 
         //支付金额异常
         //支付金额，单位元 值根据不同渠道的要求可能为浮点类型
-        if($local['price'] * $pay->product_count !== $pay->amount) {
+        if($local['price'] * $pay['product_count'] !== $pay['amount']) {
             echo "failed";
             return;
         }
 
         //发放奖励
-        $user->coin = $local['coin'] * $pay->product_count;
+        $user->coin = $local['coin'] * $pay['product_count'];
 
         //完成订单
         Order::updateId($order['id'],[
@@ -101,7 +101,7 @@ class Call {
             "action"=>"push-pay",
             "msg"=> "你的购买已完成",
             'serial'=>$serial,
-            'order_id'=>$pay->order_id,
+            'order_id'=>$pay['order_id'],
             'status'=>0,
         ]));
         echo "ok";
