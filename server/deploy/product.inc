@@ -10,7 +10,7 @@
 return [
     'ddz_coin_10'=> [
         'name'=>'小包欢乐豆',
-        'price'=>0.00,
+        'price'=>1.00,
         'coin'=>10
     ],
     'ddz_coin_100'=> [
