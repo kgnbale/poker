@@ -12,6 +12,7 @@
 namespace controller;
 use model\Order;
 use nb\Request;
+use nb\Server;
 
 /**
  * Call
@@ -75,7 +76,6 @@ class Call {
             return;
         }
 
-
         $plist = load('product');
         $local = $plist[$pay->product_id];
 
@@ -95,7 +95,16 @@ class Call {
             'post'=>$post,
             'ct'=>$time
         ]);
-        //@todo
+
+        //如果用户在线
+        //推送支付成功信息
+        Server::driver()->push($user->fd,json_encode([
+            "action"=>"push-pay",
+            "msg"=> "你的购买已完成",
+            'serial'=>$serial,
+            'order_id'=>$pay->order_id,
+            'status'=>0,
+        ]));
         echo "ok";
     }
 

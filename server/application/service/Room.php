@@ -82,6 +82,24 @@ class Room extends Service {
         return true;
     }
 
+    //掉线处理
+    public function unline($user) {
+        $room = $user->room;
+        //通知其它玩家，该玩家掉线
+        if($room->status === 'startd') {
+            $user->online = 0;
+        }
+        //如果房间状态不是startd，则让玩家退出房间
+        else {
+            $seat = $user->seat;
+            //设置玩家的房间为0，表示退出房间
+            $user->room = '0-0';
+            //清楚玩家在游戏房间的位置信息
+            $room->$seat = 0;
+        }
+        return true;
+    }
+
 
     public function synchro() {
         $auth = Auth::init();

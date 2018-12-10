@@ -9,8 +9,10 @@
  */
 namespace event;
 
+use model\Room;
 use model\User;
 use nb\event\Swoole;
+use nb\Server;
 use util\Redis;
 
 /**
@@ -32,23 +34,34 @@ class Websocket extends Swoole {
             echo "connection-close: {$fd}\n";
             return false;
         }
-        echo "{$name}下线了\n";
-        //$this->netsplit($server,$name);
-    }
+        $user = \model\User::name($name);
+        if($user->status === 'hall') {
+            echo "{$name}下线了\n";
+            return;
+        }
+        $push = [
+            'name'=>$user->name,
+            'seat'=>$user->seat
+        ];
+        $room = \service\Room::withRun('unline',$user);
 
-    private function netsplit($server,$fd,$name) {
-        $user = User::name($name);
+        $action = 'push-room-quit';
 
-        if($user->play == 'room') {
-            //踢房间
+        if($room->status === 'startd') {
+            $action = 'push-user-online';
+            $push['unline'] = 0;
         }
 
-        if($user->play == 'doing') {
-            //通知下线
+        foreach (['a','b','c'] as $v) {
+            if($v === $user->seat) {
+                continue;
+            }
+            $seat = $room->$v;
+            if(!$seat) {
+                continue;
+            }
+            Server::driver()->push($seat['fd'],$action,$push);
         }
-
-        Redis::hset('user:'.$name,['fd'=>0]);
-        Redis::delete('fd:'.$fd);
     }
 
     public function shutdown() {

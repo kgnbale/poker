@@ -33,18 +33,38 @@ class Auth extends User {
             }
             $auth = self::name($name);
             $fd = Server::driver()->fd;
-            if($auth->fd !== $fd) {
-                $auth->fd = $fd;
-                Redis::set('fd:'.$fd,$name);
+            if($auth->fd === $fd) {
+                return $auth;
+            }
+            $auth->fd = $fd;
+            Redis::set('fd:'.$fd,$name);
 
-                //如果在房间
-                if($auth->roomid) {
-                    $seat = $auth->seat;
-                    $room = $auth->room;
-                    $room->$seat = ['fd'=>$fd];
+            //如果在房间
+            if(!$auth->roomid) {
+                return $auth;
+            }
+
+            $seat = $auth->seat;
+            $room = $auth->room;
+            $room->$seat = ['fd'=>$fd];
+
+            $auth->online = 1;//设置为在线状态
+
+            foreach (['a','b','c'] as $v) {
+                if($v === $seat) {
+                    continue;
                 }
+                $seat = $room->$v;
+                if(!$seat) {
+                    continue;
+                }
+                Server::driver()->push($seat['fd'],'push-user-online',[
+                    'name'=>$auth->name,
+                    'seat'=>$auth->seat
+                ]);
             }
             return $auth;
+
         });
     }
 

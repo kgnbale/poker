@@ -91,4 +91,10 @@ class User extends Model {
         return $coin;
     }
 
+    protected function ___online($flag) {
+        Redis::hmset('user:'.$this->name,[
+            'online'=>$flag
+        ]);
+    }
+
 }
