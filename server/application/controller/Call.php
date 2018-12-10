@@ -104,6 +104,7 @@ class Call extends Base {
             "msg"=> "你的购买已完成",
             'serial'=>$serial,
             'order_id'=>$pay['order_id'],
+            'coin'=>$user->coin,
             'status'=>0,
         ]));
         echo "ok";
