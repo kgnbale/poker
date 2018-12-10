@@ -471,7 +471,7 @@
 ``` javascript
 {
     "code": 0, 
-    "action":"reply-user-online",
+    "action":"push-user-online",
     "msg": "网络异常",
     "seat":'a' //座位 
     "online":0 //掉线状态
@@ -482,7 +482,7 @@
 ``` javascript
 {
     "code": 0, 
-    "action":"reply-user-online",
+    "action":"push-user-online",
     "msg": "网络异常",
     "seat":'a' //座位 
     "online":1 //上线状态
