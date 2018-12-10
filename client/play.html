@@ -495,6 +495,9 @@
         }
     })
 
+    client.push('user-online',function (data) {
+
+    });
     client.push('play-start',function (data) {
         var div = $("#poker");
         $.each(data.poker,function(k,poker){

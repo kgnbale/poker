@@ -50,6 +50,12 @@ class Auth extends User {
 
             $auth->online = 1;//设置为在线状态
 
+            $push = json_encode([
+                'action'=>'push-user-online',
+                'msg'=>'上线了',
+                'name'=>$auth->name,
+                'seat'=>$auth->seat
+            ]);
             foreach (['a','b','c'] as $v) {
                 if($v === $seat) {
                     continue;
@@ -58,10 +64,7 @@ class Auth extends User {
                 if(!$seat) {
                     continue;
                 }
-                Server::driver()->push($seat['fd'],'push-user-online',[
-                    'name'=>$auth->name,
-                    'seat'=>$auth->seat
-                ]);
+                Server::driver()->push($seat['fd'],$push);
             }
             return $auth;
 

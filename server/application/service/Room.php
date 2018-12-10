@@ -97,6 +97,7 @@ class Room extends Service {
             //清楚玩家在游戏房间的位置信息
             $room->$seat = 0;
         }
+        $this->data = $room;
         return true;
     }
 

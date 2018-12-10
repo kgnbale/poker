@@ -34,34 +34,36 @@ class Websocket extends Swoole {
             echo "connection-close: {$fd}\n";
             return false;
         }
+        echo "{$fd} -- {$name}下线了\n";
         $user = \model\User::name($name);
         if($user->status === 'hall') {
-            echo "{$name}下线了\n";
             return;
         }
         $push = [
+            'action'=>'push-room-quit',
             'name'=>$user->name,
             'seat'=>$user->seat
         ];
-        $room = \service\Room::withRun('unline',$user);
-
-        $action = 'push-room-quit';
-
+        $ser = \service\Room::withRun('unline',$user);
+        $room = $ser->data;
         if($room->status === 'startd') {
-            $action = 'push-user-online';
+            $push['action'] = 'push-user-online';
             $push['unline'] = 0;
         }
 
+        $push = json_encode($push);
         foreach (['a','b','c'] as $v) {
             if($v === $user->seat) {
                 continue;
             }
             $seat = $room->$v;
             if(!$seat) {
+                echo 'continue-'.$seat['fd']."\n";
                 continue;
             }
-            Server::driver()->push($seat['fd'],$action,$push);
+            $server->push($seat['fd'],$push);
         }
+
     }
 
     public function shutdown() {
