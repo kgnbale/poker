@@ -29,6 +29,7 @@ class Call extends Base {
          * 支付通知验签demo
          */
         $pay = Request::form('post');
+
         /**
          * 注意：$_POST数据如果服务器没有自动处理urldecode，请做一次urldecode(参考rfc1738标准)处理
          */
@@ -40,7 +41,7 @@ class Call extends Base {
         $privateKey = "555FAA0B1628AA5D90D404FBAE9C1F0C";
         //$enhancedKey = 'OGM3ODFkNDRhYjUzYjM4ZmUzZjk';
         //注意：如果没有增强密钥的游戏只需要通用验签即可，即只需要checkSign
-        if ($this->checkSign($pay, $privateKey)) {
+        if (!$pay || !$this->checkSign($pay, $privateKey)) {
         //if (!$this->checkSign($pay, $privateKey) || !$this->checkEnhancedSign($pay, $enhancedKey)) {
             echo "failed";
             return;
