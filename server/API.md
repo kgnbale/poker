@@ -462,7 +462,7 @@
 ``` javascript
 {
     "code": 0, 
-    "action":"reply-room-quit",
+    "action":"push-room-quit",
     "msg": "退出成功",
     "seat":'a' //座位 
 }
