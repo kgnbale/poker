@@ -84,7 +84,6 @@
 <script>
 $('button').on('click', function() {
     $('#form').on('submit', function(e) {
-        alert('hell');
         $(this).ajaxSubmit({
             type: 'post', // 提交方式 get/post
             url: httpserver+'/login', // 需要提交的 url
