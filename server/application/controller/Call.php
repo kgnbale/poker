@@ -12,6 +12,7 @@ namespace controller;
 use model\Order;
 use nb\Request;
 use nb\Server;
+use util\Base;
 
 /**
  * Call
@@ -21,7 +22,7 @@ use nb\Server;
  * @author: collin <collin@nb.cx>
  * @date: 2018/11/22
  */
-class Call {
+class Call extends Base {
 
     public function index() {
         /**
@@ -114,7 +115,7 @@ class Call {
      * @param array $privateKey AnySDK分配的游戏privateKey
      * @return bool
      */
-    function checkSign($data, $privateKey) {
+    private function checkSign($data, $privateKey) {
         if (empty($data) || !isset($data['sign']) || empty($privateKey)) {
             return false;
         }
@@ -134,7 +135,7 @@ class Call {
      * @param type $enhancedKey
      * @return boolean
      */
-    function checkEnhancedSign($data, $enhancedKey) {
+    private function checkEnhancedSign($data, $enhancedKey) {
         if (empty($data) || !isset($data['enhanced_sign']) || empty($enhancedKey)) {
             return false;
         }
@@ -154,13 +155,28 @@ class Call {
      * @param string $key
      * @return string
      */
-    function getSign($data, $key) {
+    private function getSign($data, $key) {
         //数组按key升序排序
         ksort($data);
         //将数组中的值不加任何分隔符合并成字符串
         $string = implode('', $data);
         //做一次md5并转换成小写，末尾追加游戏的privateKey，最后再次做md5并转换成小写
         return strtolower(md5(strtolower(md5($string)) . $key));
+    }
+
+    //商品列表接口
+    public function product() {
+        $plist = load('product');
+
+        $data = [];
+        foreach ($plist as $k=>$v) {
+            $v['id'] = $k;
+            $data[] = $v;
+        }
+
+        $this->success('获取成功',[
+            'product'=>$data
+        ]);
     }
 
 }
