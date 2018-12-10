@@ -22,8 +22,8 @@ use util\Base;
  */
 class Register extends Base {
 
-    protected $rule = [
-        'name'  =>  'require|max:25',
+    public $_rule = [
+        'name'  =>  'require|alphaDash|max:25',
         'pass'  =>  'require|max:25',
     ];
 

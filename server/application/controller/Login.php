@@ -24,7 +24,7 @@ use util\Base;
 class Login extends Base {
 
     public $_rule = [
-        'name'  =>  'require|max:25',
+        'name'  =>  'require|alphaDash|max:25',
         'pass'  =>  'require|max:25',
     ];
 
