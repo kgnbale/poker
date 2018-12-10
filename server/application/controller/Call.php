@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the NB Framework package.
  *
@@ -8,8 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace controller;
+
 use model\Order;
 use nb\Request;
 use nb\Server;
@@ -40,7 +39,7 @@ class Call {
         $privateKey = "555FAA0B1628AA5D90D404FBAE9C1F0C";
         //$enhancedKey = 'OGM3ODFkNDRhYjUzYjM4ZmUzZjk';
         //注意：如果没有增强密钥的游戏只需要通用验签即可，即只需要checkSign
-        if (checkSign($pay, $privateKey)) {
+        if ($this->checkSign($pay, $privateKey)) {
         //if (!$this->checkSign($pay, $privateKey) || !$this->checkEnhancedSign($pay, $enhancedKey)) {
             echo "failed";
             return;
