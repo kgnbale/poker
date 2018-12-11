@@ -107,6 +107,8 @@ class Call extends Base {
             'coin'=>$user->coin,
             'status'=>0,
         ]));
+        b('exits',Server::driver()->exist($user->fd));
+        b($user->fd,$user);
         echo "ok";
     }
 
