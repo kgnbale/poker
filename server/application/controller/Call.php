@@ -83,7 +83,7 @@ class Call extends Base {
 
         //支付金额异常
         //支付金额，单位元 值根据不同渠道的要求可能为浮点类型
-        if($local['price'] * $pay['product_count'] !== $pay['amount']) {
+        if($local['price'] * $pay['product_count'] != $pay['amount']) {
             b('exp2',$local['price'] * $pay['product_count']);
             echo "failed";
             return;
