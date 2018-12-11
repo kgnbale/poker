@@ -8,6 +8,7 @@
  * file that was distributed with this source code.
  */
 return [
+    //缓存服务器配置
     'redis' => [
         'host' => '127.0.0.1',
         'port' => 6379,
@@ -19,6 +20,8 @@ return [
         'prefix' => '',
         'driver'=>'\nb\cache\Redis'
     ],
+
+    //服务器配置
     'server' => [
         'driver'=>'Websocket',
         'register'=>\event\Websocket::class,//  'event\\Websocket',//注册一个类，来实现swoole自定义事件
@@ -37,6 +40,7 @@ return [
         'enable_http'=>true,//启用内置的onRequest回调
     ],
 
+    //数据库配置
     'dao' => [
         'driver' => 'mysql',
         'host' => 'where.cx',
@@ -48,6 +52,7 @@ return [
         'charset' => 'UTF8',
     ],
 
+    //扑克列表
     'poker'=>[
         //大小王
         ['id'=>1,'val'=>20,'name'=>'大王'],
@@ -131,5 +136,11 @@ return [
         ['id'=>52,'val'=>3,'name'=>'红心3'],
         ['id'=>53,'val'=>3,'name'=>'梅花3'],
         ['id'=>54,'val'=>3,'name'=>'方片3'],
+    ],
+
+    //AnySDK相关配置
+    'anysdk'=> [
+        'privateKey'=>'555FAA0B1628AA5D90D404FBAE9C1F0C',
+        //'enhancedKey'=>''
     ]
 ];

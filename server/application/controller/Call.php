@@ -9,13 +9,14 @@
  */
 namespace controller;
 
+use deploy\Config;
 use model\Order;
 use nb\Request;
 use nb\Server;
 use util\Base;
 
 /**
- * Call
+ * 支付通知验签
  *
  * @package controller
  * @link https://nb.cx
@@ -25,9 +26,6 @@ use util\Base;
 class Call extends Base {
 
     public function index() {
-        /**
-         * 支付通知验签demo
-         */
         $pay = Request::form('post');
 
         /**
@@ -38,14 +36,18 @@ class Call extends Base {
             $data[$key] = urldecode($value);
         }
         **/
-        $privateKey = "555FAA0B1628AA5D90D404FBAE9C1F0C";
-        //$enhancedKey = 'OGM3ODFkNDRhYjUzYjM4ZmUzZjk';
+        $anysdk = Config::$o->anysdk;
+        $privateKey = $anysdk['privateKey'];//"555FAA0B1628AA5D90D404FBAE9C1F0C";
+        //$enhancedKey = $anysdk['enhancedKey']//'OGM3ODFkNDRhYjUzYjM4ZmUzZjk';
+
+
         //注意：如果没有增强密钥的游戏只需要通用验签即可，即只需要checkSign
         if (!$pay || !$this->checkSign($pay, $privateKey)) {
         //if (!$this->checkSign($pay, $privateKey) || !$this->checkEnhancedSign($pay, $enhancedKey)) {
             echo "failed";
             return;
         }
+
         $post = json_encode($pay);
         $time = time();
 
@@ -73,7 +75,6 @@ class Call extends Base {
         //支付未完成
         //支付状态，1 为成功，非1则为其他异常状态，游服请在成功的状态下发货
         if($pay['pay_status'] !== '1' || $user->empty) {
-            b('exp1',$pay['pay_status']);
             echo "failed";
             return;
         }
@@ -84,7 +85,6 @@ class Call extends Base {
         //支付金额异常
         //支付金额，单位元 值根据不同渠道的要求可能为浮点类型
         if($local['price'] * $pay['product_count'] != $pay['amount']) {
-            b('exp2',$local['price'] * $pay['product_count']);
             echo "failed";
             return;
         }
@@ -101,7 +101,8 @@ class Call extends Base {
 
         //如果用户在线
         //推送支付成功信息
-        Server::driver()->push($user->fd,json_encode([
+        $ser = Server::driver();
+        $ser->exist($user->fd) and $ser->push($user->fd,json_encode([
             "action"=>"push-pay",
             "msg"=> "你的购买已完成",
             'serial'=>$serial,
@@ -109,8 +110,6 @@ class Call extends Base {
             'coin'=>$user->coin,
             'status'=>0,
         ]));
-        b('exits',Server::driver()->exist($user->fd));
-        b($user->fd,$user);
         echo "ok";
     }
 
