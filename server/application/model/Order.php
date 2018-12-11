@@ -22,5 +22,8 @@ use nb\Model;
  */
 class Order extends Model {
 
+    public static function __config() {
+        return ['order o'];
+    }
 
 }
