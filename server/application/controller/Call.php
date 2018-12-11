@@ -72,8 +72,8 @@ class Call extends Base {
 
         //支付未完成
         //支付状态，1 为成功，非1则为其他异常状态，游服请在成功的状态下发货
-        if($pay['pay_status'] !== 1 || $user->empty) {
-            b('exp1',$user->empty);
+        if($pay['pay_status'] !== '1' || $user->empty) {
+            b('exp1',$pay['pay_status']);
             echo "failed";
             return;
         }
