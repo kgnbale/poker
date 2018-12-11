@@ -58,7 +58,7 @@ class Call extends Base {
             $order = [
                 'serial'=>$serial,
                 'order_id'=>$pay['order_id'],
-                'order_status'=>$pay['status'],
+                'order_status'=>$pay['pay_status'],
                 'uid'=>$user->id,
                 'number'=>$pay['product_count'],
                 'product_id'=>$pay['product_id'],
@@ -72,7 +72,7 @@ class Call extends Base {
 
         //支付未完成
         //支付状态，1 为成功，非1则为其他异常状态，游服请在成功的状态下发货
-        if($pay->status !== 1 || $user->empty) {
+        if($pay['pay_status'] !== 1 || $user->empty) {
             echo "failed";
             return;
         }
