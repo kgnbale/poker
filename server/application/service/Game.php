@@ -59,7 +59,8 @@ class Game extends Service {
             'call'=>json_encode([
                 'n'=>0, //叫地主次数
                 'note'=>[], //每次
-                'who'=>$call//该谁了
+                'who'=>$call,//该谁了
+                'cd'=> 0 //是否有人叫地主，0为没叫，1为叫过
             ]),
             'start'=>time(),//游戏开始时间
             'status'=>'startd',
@@ -107,7 +108,8 @@ class Game extends Service {
             $room->call = [
                 'n'=>$n+1,
                 'note'=>$call['note'],
-                'who'=>$seat==='a'?'b':($seat==='b'?'c':'a')
+                'who'=>$seat==='a'?'b':($seat==='b'?'c':'a'),
+                'cd'=> $call['cd']?:$rob //是否有人叫过地主，使下一个人为抢地主
             ];
             $this->data = $room;
             return true;

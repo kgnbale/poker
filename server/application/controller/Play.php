@@ -87,6 +87,7 @@ class Play extends Controller {
         $room = $rob->data;
         $call = $room->call['who'];
         $this->success('抢地主','play-rob',[
+            'cd' =>$room->call['cd'],
             'call' => $call
         ]);
 
@@ -101,6 +102,7 @@ class Play extends Controller {
             $push = [];
             $push['landowner'] = $landowner;
             $push['call'] = $call;
+            $push['cd'] = $room->call['cd'];
             if($landowner) {
                 foreach ($room->pocket as $p) {
                     $push['pocket'][] = $p;

@@ -99,6 +99,8 @@ class Call extends Base {
             'ct'=>$time
         ]);
 
+        echo "ok";
+
         //如果用户在线
         //推送支付成功信息
         $ser = Server::driver();
@@ -110,7 +112,6 @@ class Call extends Base {
             'coin'=>$user->coin,
             'status'=>0,
         ]));
-        echo "ok";
     }
 
 
