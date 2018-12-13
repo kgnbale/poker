@@ -87,7 +87,7 @@ class Play extends Controller {
         $room = $rob->data;
         $call = $room->call['who'];
         $this->success('抢地主','play-rob',[
-            'cd' =>$room->call['cd'],
+            //'cd' =>$room->call['cd'],
             'call' => $call
         ]);
 
