@@ -107,7 +107,11 @@ class Play extends Controller {
                 foreach ($room->pocket as $p) {
                     $push['pocket'][] = $p;
                 }
-                $landowner === $v and $push['poker'] = $player['poker'];
+                if($landowner === $v) {
+                    foreach ($player['poker'] as $p) {
+                        $push['poker'][] = $p;
+                    }
+                }
             }
             $this->push($player['fd'],'play-rob',$push);
         }
