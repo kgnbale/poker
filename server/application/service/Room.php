@@ -95,14 +95,15 @@ class Room extends Service {
             return false;
         }
 
+        //设置玩家的房间为0，表示退出房间
+        $seat = $auth->seat;
+        $auth->room = '0-0';
+
         //如果房间人数小于2，其房间为可自动销毁，将对其回收
         if($room->number<2) {
             $room->destroy();
         }
         else {
-            $seat = $auth->seat;
-            //设置玩家的房间为0，表示退出房间
-            $auth->room = '0-0';
             //清楚玩家在游戏房间的位置信息
             $room->$seat = 0;
         }
