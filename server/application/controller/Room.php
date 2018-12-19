@@ -157,6 +157,11 @@ class Room extends Controller {
         $room = $run->data;
         $this->success('退出成功','room-quit');
 
+        //如果房间已经被销毁
+        if($room->destroy) {
+            return;
+        }
+
         //通知房间其它人
         $this->roompush($room,0,'room-quit',[
             'name'=>$auth->name,
@@ -164,5 +169,15 @@ class Room extends Controller {
         ]);
     }
 
+    //创建房间
+    public function establish() {
+        $run = \service\Room::run('establish',function ($msg,$code) {
+            $this->error('room-establish',$code,$msg);
+        });
 
+        $room = $run->data;
+        $this->success('房间创建成功','room-establish',[
+            'id'=>$room->id,
+        ]);
+    }
 }

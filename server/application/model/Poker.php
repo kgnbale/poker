@@ -31,7 +31,6 @@ class Poker extends Collection {
             $v = $poker[$v-1];
         }
         $this->poker = $pokerd;
-        b('$this->poker',$this->poker);
         $this->num = count($pokerd);
     }
 

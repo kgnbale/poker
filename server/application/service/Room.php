@@ -22,6 +22,24 @@ use util\Redis;
  */
 class Room extends Service {
 
+    public function establish() {
+        $auth = Auth::init();
+
+        if($auth->play !== 'hall') {
+            $this->code = 4031;
+            $this->msg = '操作不允许';
+            return false;
+        }
+
+        list($name,$pass) = $this->input('name','pass');
+
+        $room = \model\Room::create($auth->id + 5,true,$name,$pass);
+
+        $room->add($auth);
+        $this->data = $room;
+        return true;
+    }
+
     public function enter() {
         $auth = Auth::init();
 
@@ -44,6 +62,13 @@ class Room extends Service {
         if($room->number > 2) {
             $this->code = 409;
             $this->msg = '房间满了';
+            return false;
+        }
+
+        //如果房间设置了密码，验证密码
+        if($room->pass && $room->pass != $this->input('pass')) {
+            $this->code = 410;
+            $this->msg = '请输入正确的房间密码！';
             return false;
         }
 
@@ -70,14 +95,17 @@ class Room extends Service {
             return false;
         }
 
-        $seat = $auth->seat;
-
-        //设置玩家的房间为0，表示退出房间
-        $auth->room = '0-0';
-
-        //清楚玩家在游戏房间的位置信息
-        $room->$seat = 0;
-
+        //如果房间人数小于2，其房间为可自动销毁，将对其回收
+        if($room->number<2) {
+            $room->destroy();
+        }
+        else {
+            $seat = $auth->seat;
+            //设置玩家的房间为0，表示退出房间
+            $auth->room = '0-0';
+            //清楚玩家在游戏房间的位置信息
+            $room->$seat = 0;
+        }
         $this->data = $room;
         return true;
     }
@@ -137,5 +165,6 @@ class Room extends Service {
 
         return 0;
     }
+
 
 }

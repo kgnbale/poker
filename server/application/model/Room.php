@@ -48,18 +48,30 @@ class Room extends Model {
     }
 
     //创建房间
-    private static function create($id) {
+
+    /**
+     * @param $id
+     * @param bool $destroy 是否可自动销毁，针对玩家自建房间
+     * @param null $name
+     * @param bool $pass
+     * @return Room
+     */
+    public static function create($id,$destroy=false,$name=null,$pass=false) {
+        $name === null and $name = '房间'.$id;
         $room = [
             'id'=>$id,
             //等待wait,//开始阶段startd，//end结束清算阶段
             'status'=>'wait',
+            'name'=>$name,//房间名称
+            'pass'=>$pass,//房间密码
+            'destroy'=>$destroy,
             //牌桌座位
             'a'=>0, //座位A
             'b'=>0, //座位B
             'c'=>0, //座位C
         ];
         Redis::hMset('room:'.$id,$room);
-        return $room;
+        return new self($room);
     }
 
     public static function init() {
@@ -68,12 +80,16 @@ class Room extends Model {
         });
     }
 
+    /**
+     * @param $id
+     * @return Room
+     */
     public static function get($id) {
         $room = Redis::hGetAll('room:'.$id);
-        if(!$room) {
-            $room = self::create($id);
+        if($room) {
+            return new self($room);
         }
-        return new self($room);
+        return self::create($id);
     }
 
     protected function _name() {
@@ -217,4 +233,13 @@ class Room extends Model {
         ]);
         return $seat;
     }
+
+
+    //销毁房间
+    public function destroy() {
+        Redis::delete('room:'.$this->id);
+        $this->destroy = true;
+        return true;
+    }
+
 }
