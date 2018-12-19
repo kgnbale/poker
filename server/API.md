@@ -457,6 +457,7 @@
     "code": 0, 
     "action":"reply-room-establish",
     "msg": "房间创建成功",
+    "id": "7", 
 }
 ```
 #### PS:
