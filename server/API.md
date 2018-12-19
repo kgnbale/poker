@@ -184,6 +184,7 @@
 |action  |ture    |sting   |请求动作,值固定为`room/enter`|
 |token   |ture    |sting   |登录成功后获取的token值|
 |id      |ture    |int     |房间id，值为0时，由系统分配房间|
+|pass    |false   |int     |如果房间设置了密码，需要填写正确的密码|
 
 ### 返回结果
 ``` javascript
