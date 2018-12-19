@@ -92,9 +92,9 @@ class Room extends Model {
         return self::create($id);
     }
 
-    protected function _name() {
-        return '房间'.$this->id;
-    }
+    //protected function _name() {
+    //    return '房间'.$this->id;
+    //}
 
     //房间玩家人数
     protected function _number() {
