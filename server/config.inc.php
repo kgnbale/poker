@@ -8,6 +8,10 @@
  * file that was distributed with this source code.
  */
 return [
+
+    //服务器IP
+    'ip'=>'106.14.46.41',
+
     //缓存服务器配置
     'redis' => [
         'host' => '127.0.0.1',
