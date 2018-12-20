@@ -43,7 +43,7 @@ return [
     //数据库配置
     'dao' => [
         'driver' => 'mysql',
-        'host' => 'where.cx',
+        'host' => 'dev.io',
         'port' => '3306',
         'dbname' => 'game',
         'user' => 'dev',
