@@ -46,14 +46,8 @@ return [
 
     //数据库配置
     'dao' => [
-        'driver' => 'mysql',
-        'host' => 'dev.io',
-        'port' => '3306',
-        'dbname' => 'game',
-        'user' => 'dev',
-        'pass' => '123456',
-        'connect' => 'false',
-        'charset' => 'UTF8',
+        'driver' => 'sqlite',
+        'dbname' => __APP__.'deploy/db'
     ],
 
     //扑克列表
