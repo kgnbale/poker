@@ -5,7 +5,7 @@
 
 ## 环境要求
 
-1. PHP 7.0 +, PHP-Sqlite, Redis
+1. Linux/MAC, PHP 7.0 +, PHP-Sqlite, Redis
 2. [Swoole 2.1.3](https://github.com/swoole/swoole-src/releases) +
 3. [NB Framework](https://github.com/swoole/swoole-src/releases)
 
