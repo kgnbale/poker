@@ -23,10 +23,6 @@ class Config extends \nb\Config {
 
     public $debug = true;
 
-    public $namespace = [
-        'sdk'=>'/home/www/sdk'
-    ];
-
     //自动包含路径
     public $path_autoinclude =  [
         __APP__.'deploy'.DS
@@ -39,19 +35,6 @@ class Config extends \nb\Config {
     public $cache            = [
         'timeout'   => 86400,
         'ext'       => '.cache',
-    ];
-
-    public $i18n = [
-        'path'=> __APP__.'lang/zh-cn.php'
-    ];
-
-    public $console = [
-        'name'    => 'Demo Console',
-        'version' => '1.0',
-        'user'    => null,
-        'commands'=>[
-            'util\\Client'
-        ]
     ];
 
 }
