@@ -13,6 +13,7 @@
     "php": ">=7.0",
     "ext-swoole": ">=2.1",
     "ext-redis": ">=2.2.7",
+    "ext-sqlite3": "*",
     "nbcx/framework": "dev-master"
   },
   "extra": {
