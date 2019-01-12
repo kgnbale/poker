@@ -7,7 +7,7 @@
 
 1. Linux/MAC, PHP 7.0 +, PHP-Sqlite, Redis
 2. [Swoole 2.1.3](https://github.com/swoole/swoole-src/releases) +
-3. [NB Framework](https://github.com/swoole/swoole-src/releases)
+3. [NB Framework](https://github.com/nbcx/framework)
 
 
 ## 安装
@@ -18,6 +18,13 @@ git clone https://github.com/nbcx/poker.git
 cd ./poker/server
 git clone https://github.com/nbcx/framework.git nb
 ```
+or
+```shell
+git clone https://github.com/nbcx/poker.git
+cd ./poker/server
+composer install
+```
+
 2.运行，需要确保你的redis安装并启动。
 ```shell
 cd bin

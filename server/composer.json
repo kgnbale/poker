@@ -1,0 +1,24 @@
+{
+  "name": "nb/poker",
+  "description": "Poker game demo",
+  "type": "project",
+  "keywords": [
+    "framework",
+    "nb",
+    "swoole",
+    "poker"
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.0",
+    "ext-swoole": ">=2.1",
+    "ext-redis": ">=2.2.7",
+    "nbcx/framework": "dev-master"
+  },
+  "extra": {
+    "nb-path": "nb"
+  },
+  "config": {
+    "preferred-install": "dist"
+  }
+}
