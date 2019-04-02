@@ -1,5 +1,4 @@
 <template>
-
     <div class="view">
         <div><router-link to="/app">App</router-link></div>
         这是{{page}}页面
@@ -7,6 +6,7 @@
     </div>
 </template>
 <script>
+    import '../assets/css/style.css'
     export default {
         data: function () {
             return {
@@ -17,22 +17,3 @@
         }
     }
 </script>
-<style>
-    .view {
-        font-size: 20px
-    }
-</style>
-<style lang="less">
-    .view {
-        color: red;
-    }
-</style>
-<style lang="sass">
-    .view {
-        border-bottom: 1px solid #ddd;
-    }
-</style>
-<style lang="styl">
-    .view 
-        margin-top:20px;
-</style>
