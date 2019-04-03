@@ -2,8 +2,11 @@ import Vue from "vue"
 import VueRouter from "vue-router"
 import App from "./app.vue"
 import routerConfig from "./router"
+import './assets/css/bootstrap.css'
+
 Vue.use(VueRouter)
 const router = new VueRouter(routerConfig)
+
 new Vue({
     el: "#app",
     router: router,

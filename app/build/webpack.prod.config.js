@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const baseWebpackConfig = require("./webpack.base.config")
 const path = require('path')
+const webpack=require('webpack');
 module.exports = merge(baseWebpackConfig, {
     mode: 'production',
     output: {
@@ -31,6 +32,11 @@ module.exports = merge(baseWebpackConfig, {
         new HtmlWebpackPlugin({
             filename: "index.html",
             template: "index.html"
+        }),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "windows.jQuery": "jquery"
         })
     ]
 })

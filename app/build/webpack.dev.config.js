@@ -1,6 +1,7 @@
 const merge = require("webpack-merge")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const baseWebpackConfig = require("./webpack.base.config")
+const webpack=require('webpack');
 module.exports = merge(baseWebpackConfig, {
     mode: 'development',
     output: {
@@ -25,6 +26,11 @@ module.exports = merge(baseWebpackConfig, {
         new HtmlWebpackPlugin({
             filename: "index.html",
             template: "index.html"
+        }),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "windows.jQuery": "jquery"
         })
     ]
 })
