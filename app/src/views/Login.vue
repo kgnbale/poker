@@ -19,7 +19,7 @@
 <script>
     import axios from "axios"
     import Qs from 'qs'
-    import {setCookie} from '../cookie.js'
+    import * as Cookie from '../cookie.js'
     export default {
         data: function () {
             return {
@@ -41,7 +41,7 @@
                     }
                     else {
                         console.log(data);
-                        setCookie('token',data.token)
+                        Cookie.set('token',data.token)
                         this.$router.push('/index')
                     }
                 }).then((err)=>{

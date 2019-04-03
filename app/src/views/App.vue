@@ -4,7 +4,6 @@
     </div>
 </template>
 <script>
-    import '../assets/css/common.scss';
     export default {
         data: function () {
             return {

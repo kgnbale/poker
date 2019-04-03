@@ -1,7 +1,12 @@
-export function Client(open) {
+export function Client(server,open) {
+    var oTemp = false;
 
-    var oTemp = new Object;
+    if(oTemp) {
+        return oTemp;
+    }
+    console.log('Client init');
 
+    oTemp = new Object;
     oTemp.event = {};
     var websocket = new WebSocket(server);
 
@@ -10,6 +15,7 @@ export function Client(open) {
     websocket.onclose = function (evt) {
         console.log("Disconnected");
     };
+
     websocket.onerror = function (evt, e) {
         console.log('Error occured: ' + evt.data);
     };
@@ -24,6 +30,7 @@ export function Client(open) {
             console.log('['+data.action+']no matching ...');
         }
     }
+
 
     oTemp.websocket = websocket;
 

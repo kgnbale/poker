@@ -2,6 +2,7 @@ import index from './views/index.vue'
 import app from './views/app.vue'
 import login from './views/login.vue'
 import register from './views/register.vue'
+import create from './views/Create.vue'
 export default {
     routes: [{
         path: '/',
@@ -9,6 +10,9 @@ export default {
       },{
         path: '/register',
         component: register
+      },{
+        path: '/create',
+        component: create
       },{
         path: '/index',
         component: index
