@@ -19,7 +19,7 @@
 <script>
     import axios from "axios"
     import Qs from 'qs'
-    import * as Cookie from '../cookie.js'
+    import * as Cookie from '../assets/js/cookie.js'
     export default {
         data: function () {
             return {

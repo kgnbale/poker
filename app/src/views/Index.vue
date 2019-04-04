@@ -17,8 +17,8 @@
     </main>
 </template>
 <script>
-    import * as Cookie from '../cookie.js'
-    import {Client} from '../websocket.js'
+    import * as Cookie from '../assets/js/cookie.js'
+    import {Client} from '../assets/js/websocket.js'
     export default {
         data: function () {
             return {
